@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 const unAuthPage: { [key: string]: boolean } = {
   '/': true,
   '/login': true,
+  '/signin': true,
   '/login/provider': true,
   '/login/fastlogin': true,
   '/appStore': true,

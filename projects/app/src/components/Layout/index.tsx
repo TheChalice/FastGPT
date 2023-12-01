@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Box, useColorMode, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useLoading } from '@/web/common/hooks/useLoading';
@@ -41,7 +41,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
   const { Loading } = useLoading();
   const { loading, setScreenWidth, isPc, loadGitStar } = useSystemStore();
   const { userInfo } = useUserStore();
-
+  const [showMessage, setShowMessage] = useState(true);
   const isChatPage = useMemo(
     () => router.pathname === '/chat' && Object.values(router.query).join('').length !== 0,
     [router.pathname, router.query]
@@ -50,6 +50,14 @@ const Layout = ({ children }: { children: JSX.Element }) => {
   useEffect(() => {
     if (colorMode === 'dark' && router.pathname !== '/chat') {
       setColorMode('light');
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramValue = urlParams.get('paramName');
+
+    if (paramValue && paramValue === 'hide') {
+      setShowMessage(false);
+    } else {
+      setShowMessage(true);
     }
   }, [colorMode, router.pathname, setColorMode]);
 
@@ -82,10 +90,21 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               <Auth>{children}</Auth>
             ) : (
               <>
-                <Box h={'100%'} position={'fixed'} left={0} top={0} w={'70px'}>
-                  <Navbar unread={unread} />
-                </Box>
-                <Box h={'100%'} ml={'70px'} overflow={'overlay'}>
+                {/*<Box h={'100%'} position={'fixed'} left={0} top={0} w={'70px'}>*/}
+                {/*  <Navbar unread={unread} />*/}
+                {/*</Box>*/}
+                {/*<Box h={'100%'} ml={'70px'} overflow={'overlay'}>*/}
+                {/*  <Auth>{children}</Auth>*/}
+                {/*</Box>*/}
+                {showMessage ? (
+                  <Box h={'100%'} position={'fixed'} left={0} top={0} w={'70px'}>
+                    <Navbar unread={unread} />
+                  </Box>
+                ) : (
+                  ''
+                )}
+
+                <Box h={'100%'} ml={showMessage ? '70px' : '0px'} overflow={'overlay'}>
                   <Auth>{children}</Auth>
                 </Box>
               </>
