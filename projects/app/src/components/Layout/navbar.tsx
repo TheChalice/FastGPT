@@ -174,34 +174,34 @@ const Navbar = ({ unread }: { unread: number }) => {
           </Link>
         </Box>
       )}
-      {feConfigs?.docUrl && (
-        <MyTooltip label={t('home.Docs')} placement={'right-end'}>
-          <Box
-            {...itemStyles}
-            mb={0}
-            color={'#9096a5'}
-            onClick={() => {
-              window.open(`${feConfigs.docUrl}/docs/intro`);
-            }}
-          >
-            <MyIcon name={'common/courseLight'} width={'26px'} height={'26px'} />
-          </Box>
-        </MyTooltip>
-      )}
-      {feConfigs?.show_git && (
-        <MyTooltip label={`Git Star: ${gitStar}`} placement={'right-end'}>
-          <Link
-            as={NextLink}
-            href="https://github.com/labring/FastGPT"
-            target={'_blank'}
-            {...itemStyles}
-            mt={0}
-            color={'#9096a5'}
-          >
-            <MyIcon name={'git'} width={'22px'} height={'22px'} />
-          </Link>
-        </MyTooltip>
-      )}
+      {/*{feConfigs?.docUrl && (*/}
+      {/*  <MyTooltip label={t('home.Docs')} placement={'right-end'}>*/}
+      {/*    <Box*/}
+      {/*      {...itemStyles}*/}
+      {/*      mb={0}*/}
+      {/*      color={'#9096a5'}*/}
+      {/*      onClick={() => {*/}
+      {/*        window.open(`${feConfigs.docUrl}/docs/intro`);*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      <MyIcon name={'common/courseLight'} width={'26px'} height={'26px'} />*/}
+      {/*    </Box>*/}
+      {/*  </MyTooltip>*/}
+      {/*)}*/}
+      {/*{feConfigs?.show_git && (*/}
+      {/*  <MyTooltip label={`Git Star: ${gitStar}`} placement={'right-end'}>*/}
+      {/*    <Link*/}
+      {/*      as={NextLink}*/}
+      {/*      href="https://github.com/labring/FastGPT"*/}
+      {/*      target={'_blank'}*/}
+      {/*      {...itemStyles}*/}
+      {/*      mt={0}*/}
+      {/*      color={'#9096a5'}*/}
+      {/*    >*/}
+      {/*      <MyIcon name={'git'} width={'22px'} height={'22px'} />*/}
+      {/*    </Link>*/}
+      {/*  </MyTooltip>*/}
+      {/*)}*/}
     </Flex>
   );
 };
