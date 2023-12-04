@@ -66,6 +66,9 @@ async function initRootUser() {
     exit(1);
   }
 }
+const qianyuBaseUrl = process.env.WEIXIN_BASE_URL || 'http://192.168.1.116:6441';
+console.log('process.env.WEIXIN_BASE_URL', process.env.WEIXIN_BASE_URL);
+console.log('qianyuBaseUrl', process.env.WEIXIN_BASE_URL);
 
 export function authQianyu(token: string) {
   return new Promise<{
@@ -73,7 +76,7 @@ export function authQianyu(token: string) {
   }>((resolve, reject) => {
 
     // axios.get('http://10.19.90.46:18441/portal/newtest/jttest/chatbi/api/chat/opening?token='+token)
-    const url='http://192.168.1.116:6441/qy/api/user/getUserName?token='+token
+    const url=qianyuBaseUrl+'/qy/api/user/getUserName?token='+token
     console.log('url',url);
     axios.get(url)
         .then((response) => {
