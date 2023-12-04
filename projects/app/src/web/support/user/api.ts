@@ -9,6 +9,7 @@ import type {
   OauthLoginProps,
   PostLoginProps
 } from '@fastgpt/global/support/user/api.d';
+import {PostSigninProps} from "@fastgpt/global/support/user/api.d";
 
 export const sendAuthCode = (data: {
   username: string;
@@ -66,6 +67,10 @@ export const postLogin = ({ password, ...props }: PostLoginProps) =>
   POST<ResLogin>('/user/account/loginByPassword', {
     ...props,
     password: hashStr(password)
+  });
+export const posttokenSingin = ({ token }: PostSigninProps) =>
+  POST<ResLogin>('/user/account/qianyutokenauth', {
+      'token':token
   });
 
 export const loginOut = () => GET('/user/account/loginout');

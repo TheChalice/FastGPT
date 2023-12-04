@@ -3,46 +3,40 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { createJWT, setCookie } from '@fastgpt/service/support/permission/controller';
-import { connectToDatabase } from '@/service/mongo';
+import { connectToDatabase,authQianyu } from '@/service/mongo';
 import { getUserDetail } from '@/service/support/user/controller';
 import type { PostLoginProps } from '@fastgpt/global/support/user/api.d';
+import {PostSigninProps} from "@fastgpt/global/support/user/api.d";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await connectToDatabase();
-    const { username, password, tmbId = '' } = req.body as PostLoginProps;
-    console.log('tmbId', tmbId);
-    if (!username || !password) {
-      throw new Error('缺少参数');
+    const { token} = req.body as PostSigninProps;
+    const tmbId=''
+    // let username='root'
+    let username=await authQianyu(token)
+    console.log('username', username);
+    if (!username) {
+      throw new Error('取不出用户');
     }
-
     // 检测用户是否存在
-    const authCert = await MongoUser.findOne({
-      username
-    });
-    console.log('authCert', authCert);
-    if (!authCert) {
-      throw new Error('用户未注册');
-    }
-
     const user = await MongoUser.findOne({
-      username,
-      password
+      username
     });
 
     if (!user) {
-      throw new Error('密码错误');
+      throw new Error('没这个用户');
     }
-
+    //
     const userDetail = await getUserDetail({ tmbId, userId: user._id });
-    console.log('userDetail', userDetail);
-    const token = createJWT(userDetail);
-    setCookie(res, token);
+    //
+    const fasttoken = createJWT(userDetail);
+    setCookie(res, fasttoken);
 
     jsonRes(res, {
       data: {
-        user: userDetail,
-        token
+        // user: userDetail,
+        fasttoken
       }
     });
   } catch (err) {

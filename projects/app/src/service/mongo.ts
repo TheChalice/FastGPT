@@ -7,6 +7,11 @@ import { hashStr } from '@fastgpt/global/common/string/tools';
 import { getInitConfig } from '@/pages/api/system/getInitData';
 import { createDefaultTeam } from '@fastgpt/service/support/user/team/controller';
 import { exit } from 'process';
+import http from "http";
+import axios from 'axios';
+import qs from "querystring";
+import jwt from "jsonwebtoken";
+import {ERROR_ENUM} from "@fastgpt/global/common/error/errorCode";
 
 /**
  * connect MongoDB and init data
@@ -30,8 +35,8 @@ async function initRootUser() {
     const rootUser = await MongoUser.findOne({
       username: 'root'
     });
-    const psw = process.env.DEFAULT_ROOT_PSW || '123456';
-
+    const psw = process.env.DEFAULT_ROOT_PSW || '1qaz!QAZ';
+    // console.log('psw', psw);
     let rootId = rootUser?._id || '';
 
     // init root user
@@ -60,4 +65,26 @@ async function initRootUser() {
     console.log('init root user error', error);
     exit(1);
   }
+}
+
+export function authQianyu(token: string) {
+  return new Promise<{
+    username: string;
+  }>((resolve, reject) => {
+
+    // axios.get('http://10.19.90.46:18441/portal/newtest/jttest/chatbi/api/chat/opening?token='+token)
+    const url='http://192.168.1.116:6441/qy/api/user/getUserName?token='+token
+    console.log('url',url);
+    axios.get(url)
+        .then((response) => {
+          console.log('response',response);
+                // console.log(data);
+                resolve(response.data.data || '');
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
+        });
+
+  });
 }

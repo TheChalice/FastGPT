@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { useChatStore } from '@/web/core/chat/storeChat';
 import LoginForm from './components/LoginForm';
+import { posttokenSingin } from '@/web/support/user/api';
+import { useToast } from '@/web/common/hooks/useToast';
 import dynamic from 'next/dynamic';
 import { serviceSideProps } from '@/web/common/utils/i18n';
 import { clearToken, setToken } from '@/web/support/user/auth';
@@ -24,7 +26,7 @@ const Login = () => {
   const { setUserInfo } = useUserStore();
   const { setLastChatId, setLastChatAppId } = useChatStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const { toast } = useToast();
   const loginSuccess = useCallback(
     (res: ResLogin) => {
       // init store
@@ -54,6 +56,23 @@ const Login = () => {
 
   useEffect(() => {
     clearToken();
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+
+      if (token) {
+          posttokenSingin({token}).then(function (){
+              router.replace('/app/list');
+          }).catch(function (error){
+              toast({
+                  title: error.message || '登录异常',
+                  status: 'error'
+              });
+          })
+          // setShowMessage(false);
+      } else {
+
+          // setShowMessage(true);
+      }
     router.prefetch('/app/list');
   }, []);
 
