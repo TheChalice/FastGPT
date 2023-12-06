@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Box, Flex, Image, useDisclosure } from '@chakra-ui/react';
+import {Box, Flex, Image, useDisclosure, useTheme} from '@chakra-ui/react';
 import { PageTypeEnum } from '@/constants/user';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import type { ResLogin } from '@/global/support/api/userRes.d';
@@ -15,10 +15,23 @@ import { clearToken, setToken } from '@/web/support/user/auth';
 import { feConfigs } from '@/web/common/system/staticData';
 import CommunityModal from '@/components/CommunityModal';
 import Script from 'next/script';
+import MyTooltip from "@/components/MyTooltip";
+import MyIcon from "@/components/Icon";
 const RegisterForm = dynamic(() => import('./components/RegisterForm'));
 const ForgetPasswordForm = dynamic(() => import('./components/ForgetPasswordForm'));
 
 const Login = () => {
+    const theme = useTheme();
+    const controlIconStyle = {
+        w: '300px',
+        cursor: 'pointer',
+        p: 1,
+        bg: 'white',
+        // borderRadius: 'lg',
+        // boxShadow: '0 0 5px rgba(0,0,0,0.1)',
+        // border: theme.borders.base,
+        mr: 3
+    };
   const router = useRouter();
   const { lastRoute = '' } = router.query as { lastRoute: string };
   const { isPc } = useSystemStore();
@@ -119,33 +132,37 @@ const Login = () => {
             />
           )}
 
-          {/*<Box*/}
-          {/*  position={'relative'}*/}
-          {/*  order={1}*/}
-          {/*  flex={`0 0 ${isPc ? '400px' : '100%'}`}*/}
-          {/*  height={'100%'}*/}
-          {/*  border="1px"*/}
-          {/*  borderColor="gray.200"*/}
-          {/*  py={5}*/}
-          {/*  px={10}*/}
-          {/*  borderRadius={isPc ? 'md' : 'none'}*/}
-          {/*>*/}
-          {/*  /!*<DynamicComponent type={pageType} />*!/*/}
 
-          {/*  {feConfigs?.concatMd && (*/}
-          {/*    <Box*/}
-          {/*      fontWeight={'bold'}*/}
-          {/*      color={'myBlue.700'}*/}
-          {/*      cursor={'pointer'}*/}
-          {/*      position={'absolute'}*/}
-          {/*      right={5}*/}
-          {/*      bottom={3}*/}
-          {/*      onClick={onOpen}*/}
-          {/*    >*/}
-          {/*      无法登录，点击联系*/}
-          {/*    </Box>*/}
-          {/*  )}*/}
-          {/*</Box>*/}
+          <Box
+            position={'relative'}
+            order={1}
+            flex={`0 0 ${isPc ? '400px' : '100%'}`}
+            height={'100%'}
+            border="1px"
+            borderColor="gray.200"
+            py={5}
+            px={10}
+            borderRadius={isPc ? 'md' : 'none'}
+          >
+            {/*<DynamicComponent type={pageType} />*/}
+              <MyTooltip label={'加载中...'}>
+                  <MyIcon {...controlIconStyle} name={'common/loading'} />
+              </MyTooltip>
+              <p style={{textAlign: 'center'}}>{'获取单点用户中...'}</p>
+            {/*{feConfigs?.concatMd && (*/}
+            {/*  <Box*/}
+            {/*    fontWeight={'bold'}*/}
+            {/*    color={'myBlue.700'}*/}
+            {/*    cursor={'pointer'}*/}
+            {/*    position={'absolute'}*/}
+            {/*    right={5}*/}
+            {/*    bottom={3}*/}
+            {/*    onClick={onOpen}*/}
+            {/*  >*/}
+            {/*    无法登录，点击联系*/}
+            {/*  </Box>*/}
+            {/*)}*/}
+          </Box>
         </Flex>
 
         {isOpen && <CommunityModal onClose={onClose} />}
