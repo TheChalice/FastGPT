@@ -57,7 +57,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     if (paramValue && paramValue === 'hide') {
       setShowMessage(false);
     } else {
-      setShowMessage(true);
+      setShowMessage(false);
     }
   }, [colorMode, router.pathname, setColorMode]);
 

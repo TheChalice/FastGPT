@@ -34,6 +34,17 @@ const Login = () => {
         // border: theme.borders.base,
         mr: 3
     };
+    // 设置cookie的函数
+    const setCookie = (name: string, value: string, days?: number) => {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/`;
+        console.log('document.cookie', document.cookie);
+    };
   const router = useRouter();
   const { lastRoute = '' } = router.query as { lastRoute: string };
   const { isPc } = useSystemStore();
@@ -50,6 +61,8 @@ const Login = () => {
 
       setUserInfo(res.user);
       setToken(res.token);
+
+      setCookie('token', res.token, 7);
       setTimeout(() => {
         router.push(lastRoute ? decodeURIComponent(lastRoute) : '/app/list');
       }, 300);
@@ -157,9 +170,9 @@ const Login = () => {
             {/*     */}
             {/*  </MyTooltip>*/}
               <div style={{width: '100%',height:'100px'}}>
-                  <p style={{textAlign: 'center'}}>
+                  <div style={{textAlign: 'center'}}>
                       <Spinner thickness="4px" speed="0.65s" emptyColor="myGray.100" color="myBlue.600" size="xl" />
-                  </p>
+                  </div>
                   <p style={{textAlign: 'center'}}>{'获取单点用户中...'}</p>
               </div>
 
