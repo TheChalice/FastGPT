@@ -112,12 +112,12 @@ const Login = () => {
 
           // setShowMessage(true);
       }
-    router.prefetch('/app/list');
+    // router.prefetch('/app/list');
   }, []);
 
   return (
-      <Box ref={Dom} w={'100%'} flex={'1 0 0'} bg='white' h={'100%'} position={'relative'}>
-          <Loading fixed={false} />
+      <Box ref={Dom} w={'100%'} flex={'1 0 0'}  h={'100%'} position={'relative'}>
+          <Loading loading={true} fixed={true} />
       </Box>
     // <>
     //   {feConfigs.googleClientVerKey && (
