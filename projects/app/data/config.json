@@ -1,4 +1,17 @@
 {
+  "FeConfig": {
+    "show_emptyChat": false,
+    "show_register": false,
+    "show_appStore": false,
+    "show_userDetail": false,
+    "show_contact": false,
+    "show_git": false,
+    "show_doc": false,
+    "systemTitle": "多闻",
+    "authorText": "Made by DuoWen Team.",
+    "exportLimitMinutes": 0,
+    "scripts": []
+  },
   "SystemParams": {
     "pluginBaseUrl": "",
     "vectorMaxProcess": 15,
@@ -8,77 +21,104 @@
   "ChatModels": [
     {
       "model": "gpt-3.5-turbo-1106",
-      "name": "GPT35-1106",
-      "price": 0,
-      "maxContext": 16000,
+      "name": "ChatGPT-3.5-Turbo",
+      "maxContext": 4000,
       "maxResponse": 4000,
-      "quoteMaxToken": 2000,
-      "maxTemperature": 1.2,
       "censor": false,
       "vision": false,
-      "defaultSystemChatPrompt": ""
-    },
-    {
-      "model": "gpt-3.5-turbo-16k",
-      "name": "GPT35-16k",
-      "maxContext": 16000,
-      "maxResponse": 16000,
-      "price": 0,
-      "quoteMaxToken": 8000,
-      "maxTemperature": 1.2,
-      "censor": false,
-      "vision": false,
-      "defaultSystemChatPrompt": ""
-    },
-    {
-      "model": "gpt-4",
-      "name": "GPT4-8k",
-      "maxContext": 8000,
-      "maxResponse": 8000,
-      "price": 0,
       "quoteMaxToken": 4000,
       "maxTemperature": 1.2,
+      "price": 0.07,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "gpt-4-1106-preview",
+      "name": "ChatGPT-4-Turbo",
+      "maxContext": 4000,
+      "maxResponse": 4000,
       "censor": false,
       "vision": false,
+      "quoteMaxToken": 4000,
+      "maxTemperature": 1.2,
+      "price": 2,
       "defaultSystemChatPrompt": ""
     },
     {
       "model": "gpt-4-vision-preview",
       "name": "GPT4-Vision",
-      "maxContext": 128000,
+      "maxContext": 4000,
       "maxResponse": 4000,
       "price": 0,
-      "quoteMaxToken": 100000,
+      "quoteMaxToken": 4000,
       "maxTemperature": 1.2,
       "censor": false,
       "vision": true,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "sqlcoder",
+      "name": "SQLCoder-15B",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "duowen-3b-chat",
+      "name": "Duowen-3B-Chat",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "duowen-3b-chat-go",
+      "name": "Duowen-3B-Chat-Go",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
       "defaultSystemChatPrompt": ""
     }
   ],
   "QAModels": [
     {
-      "model": "gpt-3.5-turbo-16k",
-      "name": "GPT35-16k",
-      "maxContext": 16000,
-      "maxResponse": 16000,
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
       "price": 0
     }
   ],
   "CQModels": [
     {
-      "model": "gpt-3.5-turbo-1106",
-      "name": "GPT35-1106",
-      "maxContext": 16000,
-      "maxResponse": 4000,
-      "price": 0,
-      "functionCall": true,
-      "functionPrompt": ""
-    },
-    {
-      "model": "gpt-4",
-      "name": "GPT4-8k",
-      "maxContext": 8000,
-      "maxResponse": 8000,
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
       "price": 0,
       "functionCall": true,
       "functionPrompt": ""
@@ -86,10 +126,10 @@
   ],
   "ExtractModels": [
     {
-      "model": "gpt-3.5-turbo-1106",
-      "name": "GPT35-1106",
-      "maxContext": 16000,
-      "maxResponse": 4000,
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
       "price": 0,
       "functionCall": true,
       "functionPrompt": ""
@@ -97,19 +137,19 @@
   ],
   "QGModels": [
     {
-      "model": "gpt-3.5-turbo-1106",
-      "name": "GPT35-1106",
-      "maxContext": 1600,
-      "maxResponse": 4000,
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
       "price": 0
     }
   ],
   "VectorModels": [
     {
-      "model": "text-embedding-ada-002",
-      "name": "Embedding-2",
-      "price": 0.2,
-      "defaultToken": 700,
+      "model": "embeddings",
+      "name": "Embedding",
+      "price": 0,
+      "defaultToken": 500,
       "maxToken": 3000
     }
   ],

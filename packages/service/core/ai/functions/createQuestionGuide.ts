@@ -26,6 +26,7 @@ export async function createQuestionGuide({
   });
 
   const answer = data.choices?.[0]?.message?.content || '';
+   console.log('answer', answer);
   const totalTokens = data.usage?.total_tokens || 0;
 
   const start = answer.indexOf('[');

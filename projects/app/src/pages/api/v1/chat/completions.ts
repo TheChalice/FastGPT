@@ -193,7 +193,8 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
       stream,
       detail
     });
-
+    // console.log('user', user.username);
+    const customTitle= user.username;
     // save chat
     if (chatId) {
       await saveChat({
@@ -221,7 +222,8 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
             value: answerText,
             responseData
           }
-        ]
+        ],
+        customTitle
       });
     }
 

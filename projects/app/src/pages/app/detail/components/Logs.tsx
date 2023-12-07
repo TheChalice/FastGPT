@@ -91,6 +91,7 @@ const Logs = ({ appId }: { appId: string }) => {
           <Thead>
             <Tr>
               <Th>{t('app.Logs Source')}</Th>
+              <Th>用户名</Th>
               <Th>{t('app.Logs Time')}</Th>
               <Th>{t('app.Logs Title')}</Th>
               <Th>{t('app.Logs Message Total')}</Th>
@@ -108,6 +109,7 @@ const Logs = ({ appId }: { appId: string }) => {
                 onClick={() => setDetailLogsId(item.id)}
               >
                 <Td>{t(ChatSourceMap[item.source]?.name || 'UnKnow')}</Td>
+                <Td>{item.customTitle||'-'}</Td>
                 <Td>{dayjs(item.time).format('YYYY/MM/DD HH:mm')}</Td>
                 <Td className="textEllipsis" maxW={'250px'}>
                   {item.title}

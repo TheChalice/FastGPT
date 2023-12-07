@@ -61,4 +61,5 @@ export type AppLogsListItemType = {
   messageCount: number;
   feedbackCount: number;
   markCount: number;
+  customTitle: string;
 };

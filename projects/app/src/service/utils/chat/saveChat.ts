@@ -16,6 +16,7 @@ type Props = {
   source: `${ChatSourceEnum}`;
   shareId?: string;
   content: [ChatItemType, ChatItemType];
+    customTitle: string;
 };
 
 export async function saveChat({
@@ -27,7 +28,8 @@ export async function saveChat({
   updateUseTime,
   source,
   shareId,
-  content
+  content,
+                                   customTitle
 }: Props) {
   try {
     const chatHistory = await MongoChat.findOne(
@@ -68,7 +70,19 @@ export async function saveChat({
         )
       );
     } else {
-      promise.push(
+        console.log('chatId', chatId);
+        console.log('username', {
+            chatId,
+            teamId,
+            tmbId,
+            appId,
+            variables,
+            title,
+            source,
+            shareId,
+            customTitle,
+        });
+        promise.push(
         MongoChat.create({
           chatId,
           teamId,
@@ -77,7 +91,8 @@ export async function saveChat({
           variables,
           title,
           source,
-          shareId
+          shareId,
+            customTitle,
         })
       );
     }

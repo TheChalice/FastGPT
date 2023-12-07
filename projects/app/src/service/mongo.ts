@@ -67,8 +67,8 @@ async function initRootUser() {
   }
 }
 const qianyuBaseUrl = process.env.WEIXIN_BASE_URL || 'http://192.168.1.116:6441';
-console.log('process.env.WEIXIN_BASE_URL', process.env.WEIXIN_BASE_URL);
-console.log('qianyuBaseUrl', process.env.WEIXIN_BASE_URL);
+//console.log('process.env.WEIXIN_BASE_URL', process.env.WEIXIN_BASE_URL);
+//console.log('qianyuBaseUrl', process.env.WEIXIN_BASE_URL);
 
 export function authQianyu(token: string) {
   return new Promise<{

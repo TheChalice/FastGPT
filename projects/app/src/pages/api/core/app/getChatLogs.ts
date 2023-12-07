@@ -87,6 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           $project: {
             _id: 1,
             id: '$chatId',
+            customTitle: '$customTitle',
             title: 1,
             source: 1,
             time: '$updateTime',
