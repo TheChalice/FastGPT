@@ -35,8 +35,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     jsonRes(res, {
       data: {
-        // user: userDetail,
-        fasttoken
+        user: userDetail,
+        token:fasttoken
       }
     });
   } catch (err) {

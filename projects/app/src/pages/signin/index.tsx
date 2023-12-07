@@ -88,8 +88,17 @@ const Login = () => {
       const token = urlParams.get('token');
 
       if (token) {
-          posttokenSingin({token}).then(function (){
-              router.replace('/app/list');
+          posttokenSingin({token}).then(function (res){
+              console.log('res', res);
+              setLastChatId('');
+              setLastChatAppId('');
+
+              setUserInfo(res.user);
+              setToken(res.token);
+              setTimeout(() => {
+                  router.push('/app/list');
+              }, 300);
+              // router.replace('/app/list');
           }).catch(function (error){
               toast({
                   title: error.message || '登录异常',
