@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {Box, Flex, Image, Spinner, useDisclosure, useTheme} from '@chakra-ui/react';
 import { PageTypeEnum } from '@/constants/user';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
@@ -17,6 +17,7 @@ import CommunityModal from '@/components/CommunityModal';
 import Script from 'next/script';
 import MyTooltip from "@/components/MyTooltip";
 import MyIcon from "@/components/Icon";
+import Loading from '@/components/Loading';
 import {useLoading} from "@/web/common/hooks/useLoading";
 const RegisterForm = dynamic(() => import('./components/RegisterForm'));
 const ForgetPasswordForm = dynamic(() => import('./components/ForgetPasswordForm'));
@@ -24,6 +25,7 @@ const ForgetPasswordForm = dynamic(() => import('./components/ForgetPasswordForm
 const Login = () => {
     const theme = useTheme();
     const { Loading } = useLoading();
+    const Dom = useRef<HTMLDivElement>(null);
     const controlIconStyle = {
         w: '300px',
         cursor: 'pointer',
@@ -114,96 +116,99 @@ const Login = () => {
   }, []);
 
   return (
-    <>
-      {feConfigs.googleClientVerKey && (
-        <Script
-          src={`https://www.recaptcha.net/recaptcha/api.js?render=${feConfigs.googleClientVerKey}`}
-        ></Script>
-      )}
-      <Flex
-        alignItems={'center'}
-        justifyContent={'center'}
-        bg={`url('/icon/login-bg.svg') no-repeat`}
-        backgroundSize={'cover'}
-        userSelect={'none'}
-        h={'100%'}
-        px={[0, '10vw']}
-      >
-        <Flex
-          height="100%"
-          w={'100%'}
-          maxW={'1240px'}
-          maxH={['auto', 'max(660px,80vh)']}
-          backgroundColor={'#fff'}
-          alignItems={'center'}
-          justifyContent={'center'}
-          py={[5, 10]}
-          px={'5vw'}
-          borderRadius={isPc ? 'md' : 'none'}
-          gap={5}
-        >
-          {isPc && (
-            <Image
-              src={'/icon/loginLeft.svg'}
-              order={pageType === PageTypeEnum.login ? 0 : 2}
-              flex={'1 0 0'}
-              w="0"
-              maxW={'600px'}
-              height={'100%'}
-              maxH={'450px'}
-              alt=""
-              loading={'lazy'}
-            />
-          )}
-
-
-          <Box
-            position={'relative'}
-            order={1}
-            flex={`0 0 ${isPc ? '400px' : '100%'}`}
-            height={'100%'}
-            border="1px"
-            borderColor="gray.200"
-            display='flex'
-            flexDirection='column'
-            alignItems='center'
-            justifyContent='center'
-            py={5}
-            px={10}
-            borderRadius={isPc ? 'md' : 'none'}
-          >
-            {/*<DynamicComponent type={pageType} />*/}
-            {/*  <MyTooltip label={'加载中...'}>*/}
-            {/*      <MyIcon {...controlIconStyle} name={'common/loading'} />*/}
-            {/*      <Loading loading={true} zIndex={999999} />*/}
-            {/*     */}
-            {/*  </MyTooltip>*/}
-              <div style={{width: '100%',height:'100px'}}>
-                  <div style={{textAlign: 'center'}}>
-                      <Spinner thickness="4px" speed="0.65s" emptyColor="myGray.100" color="myBlue.600" size="xl" />
-                  </div>
-                  <p style={{textAlign: 'center'}}>{'获取单点用户中...'}</p>
-              </div>
-
-            {/*{feConfigs?.concatMd && (*/}
-            {/*  <Box*/}
-            {/*    fontWeight={'bold'}*/}
-            {/*    color={'myBlue.700'}*/}
-            {/*    cursor={'pointer'}*/}
-            {/*    position={'absolute'}*/}
-            {/*    right={5}*/}
-            {/*    bottom={3}*/}
-            {/*    onClick={onOpen}*/}
-            {/*  >*/}
-            {/*    无法登录，点击联系*/}
-            {/*  </Box>*/}
-            {/*)}*/}
-          </Box>
-        </Flex>
-
-        {isOpen && <CommunityModal onClose={onClose} />}
-      </Flex>
-    </>
+      <Box ref={Dom} w={'100%'} flex={'1 0 0'} bg='white' h={'100%'} position={'relative'}>
+          <Loading fixed={false} />
+      </Box>
+    // <>
+    //   {feConfigs.googleClientVerKey && (
+    //     <Script
+    //       src={`https://www.recaptcha.net/recaptcha/api.js?render=${feConfigs.googleClientVerKey}`}
+    //     ></Script>
+    //   )}
+    //   <Flex
+    //     alignItems={'center'}
+    //     justifyContent={'center'}
+    //     bg={`url('/icon/login-bg.svg') no-repeat`}
+    //     backgroundSize={'cover'}
+    //     userSelect={'none'}
+    //     h={'100%'}
+    //     px={[0, '10vw']}
+    //   >
+    //     <Flex
+    //       height="100%"
+    //       w={'100%'}
+    //       maxW={'1240px'}
+    //       maxH={['auto', 'max(660px,80vh)']}
+    //       backgroundColor={'#fff'}
+    //       alignItems={'center'}
+    //       justifyContent={'center'}
+    //       py={[5, 10]}
+    //       px={'5vw'}
+    //       borderRadius={isPc ? 'md' : 'none'}
+    //       gap={5}
+    //     >
+    //       {isPc && (
+    //         <Image
+    //           src={'/icon/loginLeft.svg'}
+    //           order={pageType === PageTypeEnum.login ? 0 : 2}
+    //           flex={'1 0 0'}
+    //           w="0"
+    //           maxW={'600px'}
+    //           height={'100%'}
+    //           maxH={'450px'}
+    //           alt=""
+    //           loading={'lazy'}
+    //         />
+    //       )}
+    //
+    //
+    //       <Box
+    //         position={'relative'}
+    //         order={1}
+    //         flex={`0 0 ${isPc ? '400px' : '100%'}`}
+    //         height={'100%'}
+    //         border="1px"
+    //         borderColor="gray.200"
+    //         display='flex'
+    //         flexDirection='column'
+    //         alignItems='center'
+    //         justifyContent='center'
+    //         py={5}
+    //         px={10}
+    //         borderRadius={isPc ? 'md' : 'none'}
+    //       >
+    //         {/*<DynamicComponent type={pageType} />*/}
+    //         {/*  <MyTooltip label={'加载中...'}>*/}
+    //         {/*      <MyIcon {...controlIconStyle} name={'common/loading'} />*/}
+    //         {/*      <Loading loading={true} zIndex={999999} />*/}
+    //         {/*     */}
+    //         {/*  </MyTooltip>*/}
+    //           <div style={{width: '100%',height:'100%'}}>
+    //               <div style={{textAlign: 'center'}}>
+    //                   <Spinner thickness="4px" speed="0.65s" emptyColor="myGray.100" color="myBlue.600" size="xl" />
+    //               </div>
+    //               <p style={{textAlign: 'center'}}>{'获取单点用户中...'}</p>
+    //           </div>
+    //
+    //         {/*{feConfigs?.concatMd && (*/}
+    //         {/*  <Box*/}
+    //         {/*    fontWeight={'bold'}*/}
+    //         {/*    color={'myBlue.700'}*/}
+    //         {/*    cursor={'pointer'}*/}
+    //         {/*    position={'absolute'}*/}
+    //         {/*    right={5}*/}
+    //         {/*    bottom={3}*/}
+    //         {/*    onClick={onOpen}*/}
+    //         {/*  >*/}
+    //         {/*    无法登录，点击联系*/}
+    //         {/*  </Box>*/}
+    //         {/*)}*/}
+    //       </Box>
+    //     </Flex>
+    //
+    //     {isOpen && <CommunityModal onClose={onClose} />}
+    //   </Flex>
+    // </>
   );
 };
 
