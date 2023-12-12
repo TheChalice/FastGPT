@@ -26,6 +26,7 @@ const nodeTypes = {
   [FlowNodeTypeEnum.classifyQuestion]: dynamic(() => import('./components/nodes/NodeCQNode')),
   [FlowNodeTypeEnum.contentExtract]: dynamic(() => import('./components/nodes/NodeExtract')),
   [FlowNodeTypeEnum.httpRequest]: dynamic(() => import('./components/nodes/NodeHttp')),
+  [FlowNodeTypeEnum.httptestRequest]: dynamic(() => import('./components/nodes/NodeHttptest')),
   [FlowNodeTypeEnum.runApp]: NodeSimple,
   [FlowNodeTypeEnum.pluginInput]: dynamic(() => import('./components/nodes/NodePluginInput')),
   [FlowNodeTypeEnum.pluginOutput]: dynamic(() => import('./components/nodes/NodePluginOutput')),

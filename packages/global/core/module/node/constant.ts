@@ -38,6 +38,7 @@ export enum FlowNodeTypeEnum {
   classifyQuestion = 'classifyQuestion',
   contentExtract = 'contentExtract',
   httpRequest = 'httpRequest',
+  httptestRequest = 'httptestRequest',
   runApp = 'app',
   pluginModule = 'pluginModule',
   pluginInput = 'pluginInput',
