@@ -10,6 +10,8 @@ import styles from './index.module.scss';
 import dynamic from 'next/dynamic';
 
 import CodeLight from './CodeLight';
+import chartRenderer from './chartRenderer';
+import {Box} from "@chakra-ui/react";
 
 const MermaidCodeBlock = dynamic(() => import('./img/MermaidCodeBlock'));
 const MdImage = dynamic(() => import('./img/Image'));
@@ -57,6 +59,25 @@ function Image({ src }: { src?: string }) {
 }
 
 const Markdown = ({ source, isChatting = false }: { source: string; isChatting?: boolean }) => {
+  // console.log('isChatting', isChatting);
+  if (isChatting === false) {
+    console.log('source', source);
+  }
+  const markdown = `
+# 示例
+
+这是一个折线图的例子：
+
+\`\`\`chart
+[
+  {"name": "A", "value": 400},
+  {"name": "B", "value": 800},
+  {"name": "C", "value": 600},
+  {"name": "D", "value": 1000}
+]
+\`\`\`
+`;
+  const isPc=false;
   const components = useMemo(
     () => ({
       img: Image,
@@ -72,18 +93,38 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
     .replace(/(http[s]?:\/\/[^\s，。]+)([。，])/g, '$1 $2');
 
   return (
-    <ReactMarkdown
-      className={`markdown ${styles.markdown}
+      <div>
+        {isPc && (
+            <>
+              <ReactMarkdown
+                  components={chartRenderer}>
+              {markdown}
+              </ReactMarkdown>
+            </>
+        )}
+        {!isPc && (
+            <>
+              <ReactMarkdown
+                  className={`markdown ${styles.markdown}
       ${isChatting ? (source === '' ? styles.waitingAnimation : styles.animation) : ''}
     `}
-      remarkPlugins={[RemarkGfm, RemarkMath, RemarkBreaks]}
-      rehypePlugins={[RehypeKatex]}
-      // @ts-ignore
-      components={components}
-      linkTarget={'_blank'}
-    >
-      {formatSource}
-    </ReactMarkdown>
+                  remarkPlugins={[RemarkGfm, RemarkMath, RemarkBreaks]}
+                  rehypePlugins={[RehypeKatex]}
+                  // @ts-ignore
+                  components={components}
+                  linkTarget={'_blank'}
+              >
+                {formatSource}
+              </ReactMarkdown>
+            </>
+        )}
+
+      </div>
+
+
+
+
+
   );
 };
 
