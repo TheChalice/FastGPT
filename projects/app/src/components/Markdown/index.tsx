@@ -63,21 +63,91 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
   if (isChatting === false) {
     console.log('source', source);
   }
+//   const markdown = `
+// # 示例
+// 这是一个折线图的例子：
+// \`\`\`linechart
+// [
+//  {
+//     "name": "Page A",
+//     "uv": 4000,
+//     "pv": 2400
+//   },
+//   {
+//     "name": "Page B",
+//     "uv": 3000,
+//     "pv": 1398
+//   },
+//   {
+//     "name": "Page C",
+//     "uv": 2000,
+//     "pv": 9800
+//   },
+//   {
+//     "name": "Page D",
+//     "uv": 2780,
+//     "pv": 3908
+//   }
+// ]
+// \`\`\`
+// `;
+//   const markdown = `
+// # 示例
+// 这是一个折线图的例子：
+// \`\`\`barchart
+// [
+//  {
+//     "name": "Page A",
+//     "uv": 4000,
+//     "pv": 2400
+//   },
+//   {
+//     "name": "Page B",
+//     "uv": 3000,
+//     "pv": 1398
+//   },
+//   {
+//     "name": "Page C",
+//     "uv": 2000,
+//     "pv": 9800
+//   },
+//   {
+//     "name": "Page D",
+//     "uv": 2780,
+//     "pv": 3908
+//   }
+// ]
+// \`\`\`
+// `;
   const markdown = `
 # 示例
-
 这是一个折线图的例子：
-
-\`\`\`chart
+\`\`\`piechart
 [
-  {"name": "A", "value": 400},
-  {"name": "B", "value": 800},
-  {"name": "C", "value": 600},
-  {"name": "D", "value": 1000}
+  {
+    "name": "Group A",
+    "value": 400,
+    "color": "#ff0000"
+  },
+  {
+    "name": "Group B",
+    "value": 300,
+    "color": "#00ff00"
+  },
+  {
+    "name": "Group C",
+    "value": 300,
+    "color": "#0000ff"
+  },
+  {
+    "name": "Group D",
+    "value": 200,
+    "color": "#8884d8"
+  }
 ]
 \`\`\`
 `;
-  const isPc=false;
+  const isChart=false;
   const components = useMemo(
     () => ({
       img: Image,
@@ -94,7 +164,7 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 
   return (
       <div>
-        {isPc && (
+        {isChart && (
             <>
               <ReactMarkdown
                   components={chartRenderer}>
@@ -102,7 +172,7 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
               </ReactMarkdown>
             </>
         )}
-        {!isPc && (
+        {!isChart && (
             <>
               <ReactMarkdown
                   className={`markdown ${styles.markdown}
