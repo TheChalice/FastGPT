@@ -9,8 +9,8 @@ export const HttptestModule: FlowModuleTemplateType = {
   templateType: ModuleTemplateTypeEnum.externalCall,
   flowType: FlowNodeTypeEnum.httptestRequest,
   avatar: '/imgs/module/http.png',
-  name: 'HTTP（千语模块）',
-  intro: '自己攒的HTTP POST 请求，实现更为复杂的操作（联网搜索、数据库查询等）',
+  name: 'HTTP（内部服务调用）',
+  intro: '内部服务的HTTP POST 请求，实现更为复杂的操作（联网搜索、数据库查询等）',
   showStatus: true,
   inputs: [
     Input_Template_TFSwitch,
@@ -21,9 +21,9 @@ export const HttptestModule: FlowModuleTemplateType = {
       valueType: ModuleDataTypeEnum.string,
       list:[
         { label: '千语', value: 'http://10.1.251.110:6442/qy' },
-        { label: '千语test', value: 'http://10.1.251.110:6442/qy' }
+        { label: '千语test', value: 'http://10.1.251.110:6442/qy111' }
       ],
-      label: '请求地址1111',
+      label: '请求地址',
       description: '请求目标地址',
       placeholder: 'https://api.fastgpt.run/getInventory',
       required: true,

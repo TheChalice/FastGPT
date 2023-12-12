@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic';
 import Auth from './auth';
 import Navbar from './navbar';
 import NavbarPhone from './navbarPhone';
+import {LANG_KEY} from "@/web/common/utils/i18n";
 const UpdateInviteModal = dynamic(
   () => import('@/components/support/user/team/UpdateInviteModal'),
   { ssr: false }
@@ -51,14 +52,21 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     if (colorMode === 'dark' && router.pathname !== '/chat') {
       setColorMode('light');
     }
-    const urlParams = new URLSearchParams(window.location.search);
-    const paramValue = urlParams.get('paramName');
-
-    if (paramValue && paramValue === 'hide') {
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const paramValue = urlParams.get('paramName');
+    const paramValue = localStorage.getItem('paramName');
+    if (paramValue == 'show') {
+      setShowMessage(true);
+    }else {
       setShowMessage(false);
-    } else {
-      setShowMessage(false);
+      localStorage.setItem('paramName','');
     }
+
+    // if (paramValue && paramValue === 'hide') {
+    //   setShowMessage(false);
+    // } else {
+    //   setShowMessage(false);
+    // }
   }, [colorMode, router.pathname, setColorMode]);
 
   useEffect(() => {
