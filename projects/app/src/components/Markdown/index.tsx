@@ -147,7 +147,7 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 ]
 \`\`\`
 `;
-  const isChart=false;
+  const isChart=true;
   const components = useMemo(
     () => ({
       img: Image,

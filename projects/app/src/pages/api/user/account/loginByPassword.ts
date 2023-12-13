@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await connectToDatabase();
     const { username, password, tmbId = '' } = req.body as PostLoginProps;
-    console.log('tmbId', tmbId);
+    //console.log('tmbId', tmbId);
     if (!username || !password) {
       throw new Error('缺少参数');
     }
@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const authCert = await MongoUser.findOne({
       username
     });
-    console.log('authCert', authCert);
+    //console.log('authCert', authCert);
     if (!authCert) {
       throw new Error('用户未注册');
     }
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const userDetail = await getUserDetail({ tmbId, userId: user._id });
-    console.log('userDetail', userDetail);
+    //console.log('userDetail', userDetail);
     const token = createJWT(userDetail);
     setCookie(res, token);
 
