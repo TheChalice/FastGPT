@@ -60,9 +60,9 @@ function Image({ src }: { src?: string }) {
 
 const Markdown = ({ source, isChatting = false }: { source: string; isChatting?: boolean }) => {
   // console.log('isChatting', isChatting);
-  if (isChatting === false) {
-    console.log('source', source);
-  }
+  // if (isChatting === false) {
+  //   console.log('source', source);
+  // }
 //   const markdown = `
 // # 示例
 // 这是一个折线图的例子：
@@ -147,7 +147,7 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 ]
 \`\`\`
 `;
-  const isChart=true;
+  const isChart=false;
   const components = useMemo(
     () => ({
       img: Image,

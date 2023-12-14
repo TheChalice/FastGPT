@@ -10,6 +10,7 @@ import type {
   PostLoginProps
 } from '@fastgpt/global/support/user/api.d';
 import {PostSigninProps} from "@fastgpt/global/support/user/api.d";
+import {MyObject} from "@/global/support/api/userRes.d";
 
 export const sendAuthCode = (data: {
   username: string;
@@ -71,6 +72,9 @@ export const postLogin = ({ password, ...props }: PostLoginProps) =>
 export const posttokenSingin = ({ token }: PostSigninProps) =>
   POST<ResLogin>('/user/account/qianyutokenauth', {
       'token':token
+  });
+export const postqymodellist = () =>
+  POST<MyObject[]>('/user/account/qianyuHttpModelList', {
   });
 
 export const loginOut = () => GET('/user/account/loginout');

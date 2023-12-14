@@ -4,6 +4,10 @@ export interface ResLogin {
   user: UserType;
   token: string;
 }
+export interface MyObject {
+  label: string;
+  value: string;
+}
 
 export interface PromotionRecordType {
   _id: PromotionRecordSchema['_id'];

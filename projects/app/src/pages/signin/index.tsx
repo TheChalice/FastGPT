@@ -2,12 +2,12 @@ import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {Box, Flex, Image, Spinner, useDisclosure, useTheme} from '@chakra-ui/react';
 import { PageTypeEnum } from '@/constants/user';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
-import type { ResLogin } from '@/global/support/api/userRes.d';
+import type {MyObject, ResLogin} from '@/global/support/api/userRes.d';
 import { useRouter } from 'next/router';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { useChatStore } from '@/web/core/chat/storeChat';
 import LoginForm from './components/LoginForm';
-import { posttokenSingin } from '@/web/support/user/api';
+import {postqymodellist, posttokenSingin} from '@/web/support/user/api';
 import { useToast } from '@/web/common/hooks/useToast';
 import dynamic from 'next/dynamic';
 import { serviceSideProps } from '@/web/common/utils/i18n';
@@ -90,7 +90,24 @@ const Login = () => {
       const token = urlParams.get('token');
 
       if (token) {
+
+          postqymodellist().then(function (res){
+              // console.log('res', JSON.stringify(res));
+              let selectlist=res
+              // selectlist.forEach(function (item){
+              //     item.value=item.value+'?qyToken='+token
+              // })
+              localStorage.setItem('modellist',JSON.stringify(selectlist))
+
+              // router.replace('/app/list');
+          }).catch(function (error){
+              toast({
+                  title: error.message || '获取model列表异常',
+                  status: 'error'
+              });
+          })
           posttokenSingin({token}).then(function (res){
+              localStorage.setItem('qyToken',token)
               console.log('res', res);
               setLastChatId('');
               setLastChatAppId('');

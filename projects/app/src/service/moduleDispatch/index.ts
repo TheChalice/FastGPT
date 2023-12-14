@@ -21,6 +21,7 @@ import { dispatchAnswer } from './tools/answer';
 import { dispatchClassifyQuestion } from './agent/classifyQuestion';
 import { dispatchContentExtract } from './agent/extract';
 import { dispatchHttpRequest } from './tools/http';
+import { dispatchHttptestRequest } from './tools/httptest';
 import { dispatchAppRequest } from './tools/runApp';
 import { dispatchRunPlugin } from './plugin/run';
 import { dispatchPluginInput } from './plugin/runInput';
@@ -199,6 +200,7 @@ export async function dispatchModules({
         [FlowNodeTypeEnum.classifyQuestion]: dispatchClassifyQuestion,
         [FlowNodeTypeEnum.contentExtract]: dispatchContentExtract,
         [FlowNodeTypeEnum.httpRequest]: dispatchHttpRequest,
+        [FlowNodeTypeEnum.httptestRequest]: dispatchHttptestRequest,
         [FlowNodeTypeEnum.runApp]: dispatchAppRequest,
         [FlowNodeTypeEnum.pluginModule]: dispatchRunPlugin,
         [FlowNodeTypeEnum.pluginInput]: dispatchPluginInput,

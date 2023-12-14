@@ -91,3 +91,25 @@ export function authQianyu(token: string) {
 
   });
 }
+type MyArrayType = {
+  label: string;
+  value: string;
+}[];
+export function authQianyuurlList() {
+  return new Promise<MyArrayType>((resolve, reject) => {
+
+    // axios.get('http://10.19.90.46:18441/portal/newtest/jttest/chatbi/api/chat/opening?token='+token)
+    const url=qianyuBaseUrl+'/qy/api/core/interface/showApis'
+    // console.log('url',url);
+    axios.post(url,{})
+        .then((response) => {
+          // console.log('response',response.data.data);
+          resolve(response.data.data || []);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
+        });
+
+  });
+}
