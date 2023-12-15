@@ -1,0 +1,177 @@
+{
+  "FeConfig": {
+    "show_emptyChat": false,
+    "show_register": false,
+    "show_appStore": false,
+    "show_userDetail": false,
+    "show_contact": false,
+    "show_git": false,
+    "show_doc": false,
+    "systemTitle": "多闻",
+    "authorText": "Made by DuoWen Team.",
+    "exportLimitMinutes": 0,
+    "scripts": []
+  },
+  "SystemParams": {
+    "pluginBaseUrl": "",
+    "vectorMaxProcess": 15,
+    "qaMaxProcess": 15,
+    "pgHNSWEfSearch": 100
+  },
+  "ChatModels": [
+    {
+      "model": "gpt-3.5-turbo-1106",
+      "name": "ChatGPT-3.5-Turbo",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 4000,
+      "maxTemperature": 1.2,
+      "price": 0.07,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "gpt-4-1106-preview",
+      "name": "ChatGPT-4-Turbo",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 4000,
+      "maxTemperature": 1.2,
+      "price": 2,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "gpt-4-vision-preview",
+      "name": "GPT4-Vision",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "price": 0,
+      "quoteMaxToken": 4000,
+      "maxTemperature": 1.2,
+      "censor": false,
+      "vision": true,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "sqlcoder",
+      "name": "SQLCoder-15B",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "duowen-3b-chat",
+      "name": "Duowen-3B-Chat",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
+      "defaultSystemChatPrompt": ""
+    },
+    {
+      "model": "duowen-3b-chat-go",
+      "name": "Duowen-3B-Chat-Go",
+      "maxContext": 4000,
+      "maxResponse": 4000,
+      "censor": false,
+      "vision": false,
+      "quoteMaxToken": 2000,
+      "maxTemperature": 1.2,
+      "price": 0,
+      "defaultSystemChatPrompt": ""
+    }
+  ],
+  "QAModels": [
+    {
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
+      "price": 0
+    }
+  ],
+  "CQModels": [
+    {
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
+      "price": 0,
+      "functionCall": true,
+      "functionPrompt": ""
+    }
+  ],
+  "ExtractModels": [
+    {
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
+      "price": 0,
+      "functionCall": true,
+      "functionPrompt": ""
+    }
+  ],
+  "QGModels": [
+    {
+      "model": "qwen-14b",
+      "name": "通义千问-14B",
+      "maxContext": 2000,
+      "maxResponse": 2000,
+      "price": 0
+    }
+  ],
+  "VectorModels": [
+    {
+      "model": "embeddings",
+      "name": "Embedding",
+      "price": 0,
+      "defaultToken": 500,
+      "maxToken": 3000
+    }
+  ],
+  "ReRankModels": [],
+  "AudioSpeechModels": [
+    {
+      "model": "tts-1",
+      "name": "OpenAI TTS1",
+      "price": 0,
+      "voices": [
+        { "label": "Alloy", "value": "alloy", "bufferId": "openai-Alloy" },
+        { "label": "Echo", "value": "echo", "bufferId": "openai-Echo" },
+        { "label": "Fable", "value": "fable", "bufferId": "openai-Fable" },
+        { "label": "Onyx", "value": "onyx", "bufferId": "openai-Onyx" },
+        { "label": "Nova", "value": "nova", "bufferId": "openai-Nova" },
+        { "label": "Shimmer", "value": "shimmer", "bufferId": "openai-Shimmer" }
+      ]
+    }
+  ],
+  "WhisperModel": {
+    "model": "whisper-1",
+    "name": "Whisper1",
+    "price": 0
+  }
+}
