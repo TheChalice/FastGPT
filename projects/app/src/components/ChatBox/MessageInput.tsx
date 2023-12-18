@@ -185,13 +185,13 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
         pb={['14px', '18px']}
         position={'relative'}
         boxShadow={isSpeaking ? `0 0 10px rgba(54,111,255,0.4)` : `0 0 10px rgba(0,0,0,0.2)`}
-        borderRadius={['none', 'md']}
+        borderRadius={'30px'}
         bg={'white'}
         overflow={'hidden'}
         {...(isPc
           ? {
-              border: '1px solid',
-              borderColor: 'rgba(0,0,0,0.12)'
+              border: '1px solid #3261CE',
+              // borderColor: 'rgba(0,0,0,0.12)'
             }
           : {
               borderTop: '1px solid',
@@ -309,7 +309,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
             _focusVisible={{
               border: 'none'
             }}
-            placeholder={isSpeaking ? t('core.chat.Speaking') : t('core.chat.Type a message')}
+            placeholder="提问"
             resize={'none'}
             rows={1}
             height={'22px'}
@@ -408,7 +408,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
                 h={['28px', '32px']}
                 w={['28px', '32px']}
                 borderRadius={'md'}
-                bg={isSpeaking || isChatting ? '' : !havInput ? '#E5E5E5' : 'myBlue.600'}
+                // bg={isSpeaking || isChatting ? '' : !havInput ? '#E5E5E5' : 'myBlue.600'}
                 cursor={havInput ? 'pointer' : 'not-allowed'}
                 lineHeight={1}
                 onClick={() => {
@@ -432,12 +432,14 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
                 ) : (
                   <MyTooltip label={t('core.chat.Send Message')}>
                     <MyIcon
-                      name={'core/chat/sendFill'}
+                      name={'core/chat/chatSend'}
                       width={['18px', '20px']}
                       height={['18px', '20px']}
-                      color={'white'}
+                      cursor={'pointer'}
+                      color={'gray.500'}
                     />
                   </MyTooltip>
+
                 )}
               </Flex>
             )}

@@ -563,6 +563,7 @@ const ChatBox = (
           {/*    </Box>*/}
           {/*  </Box>*/}
           {/*)}*/}
+
           {/* variable input */}
           {!!variableModules?.length && (
             <Box py={3}>

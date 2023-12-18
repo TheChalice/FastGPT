@@ -104,6 +104,7 @@ const iconPaths = {
   'core/app/headphones': () => import('./icons/core/app/headphones.svg'),
   'common/playLight': () => import('./icons/common/playLight.svg'),
   'core/chat/sendFill': () => import('./icons/core/chat/sendFill.svg'),
+  'core/chat/chatSend': () => import('./icons/core/chat/chatSend.svg'),
   'core/chat/recordFill': () => import('./icons/core/chat/recordFill.svg'),
   'core/chat/stopSpeechFill': () => import('./icons/core/chat/stopSpeechFill.svg'),
   'core/chat/stopSpeech': () => import('./icons/core/chat/stopSpeech.svg'),
