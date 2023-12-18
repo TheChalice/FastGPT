@@ -164,6 +164,24 @@ const ChatBox = (
     () => splitGuideModule(userGuideModule),
     [userGuideModule]
   );
+  const [introList, setIntroList] = useState<any[]>([
+    {
+      title: '业务知识',
+      qs: '请解释什么是"5G网络客户渗透率"'
+    },
+    {
+      title: '语义取数',
+      qs: '通服收入如何?'
+    },
+    {
+      title: '分析报告',
+      qs: '帮我分析一下杭州宽带发展情况怎么样?'
+    },
+    {
+      title: '代码生成',
+      qs: '给我写一下近3个月宽带网络质量的SQL?'
+    }
+  ]);
 
   // compute variable input is finish.
   const [variableInputFinish, setVariableInputFinish] = useState(false);
@@ -533,18 +551,18 @@ const ChatBox = (
         <Box id="chat-container" maxW={['100%', '92%']} h={'100%'} mx={'auto'}>
           {showEmpty && <Empty />}
 
-          {!!welcomeText && (
-            <Box py={3}>
-              {/* avatar */}
-              <ChatAvatar src={appAvatar} type={'AI'} />
-              {/* message */}
-              <Box textAlign={'left'}>
-                <Card order={2} mt={2} {...MessageCardStyle} bg={'white'}>
-                  <Markdown source={`~~~guide \n${welcomeText}`} isChatting={false} />
-                </Card>
-              </Box>
-            </Box>
-          )}
+          {/*{!!welcomeText && (*/}
+          {/*  <Box py={3}>*/}
+          {/*    /!* avatar *!/*/}
+          {/*    <ChatAvatar src={appAvatar} type={'AI'} />*/}
+          {/*    /!* message *!/*/}
+          {/*    <Box textAlign={'left'}>*/}
+          {/*      <Card order={2} mt={2} {...MessageCardStyle} bg={'white'}>*/}
+          {/*        <Markdown source={`~~~guide \n${welcomeText}`} isChatting={false} />*/}
+          {/*      </Card>*/}
+          {/*    </Box>*/}
+          {/*  </Box>*/}
+          {/*)}*/}
           {/* variable input */}
           {!!variableModules?.length && (
             <Box py={3}>
@@ -615,7 +633,50 @@ const ChatBox = (
               </Box>
             </Box>
           )}
+          {
+              chatHistory.length === 0 && (
+                  <div
+                      className={styles.chatIntro}>
+                    <div className={styles.introTitle}>
+                      <img
+                        className={styles.logo}
+                          src="/icon/logo.svg"/>
+                      <div
+                           className={styles.descr}>
+                        今天可以帮你什么？
+                      </div>
+                    </div>
+                    <div
+                        className={styles.list}
+                        >
+                      <div className={styles.inlist}>
+                        {introList.map((item,i) => {
+                          return (
+                              <div
+                                  key={i}
+                                  className={styles.item}
+                                  onClick={() => {
+                                    handleSubmit((data) => sendPrompt(data, item.qs))()
+                                  }}>
+                                <div
+                                    className={styles.title}
+                                >
+                                  {item.title}
+                                </div>
+                                <div
+                                    className={styles.descr}
+                                >
+                                  {item.qs}
+                                </div>
+                              </div>
+                          )
+                        })}
+                      </div>
 
+                    </div>
+                  </div>
+              )
+          }
           {/* chat history */}
           <Box id={'history'}>
             {chatHistory.map((item, index) => (
