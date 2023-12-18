@@ -151,10 +151,9 @@ const ChatHistorySlider = ({
           />
         )}
         <Button
-          variant={'base'}
+          variant={'blue'}
           flex={1}
           h={'100%'}
-          color={'myBlue.700'}
           borderRadius={'xl'}
           leftIcon={<MyIcon name={'chat'} w={'16px'} />}
           overflow={'hidden'}

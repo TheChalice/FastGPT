@@ -100,11 +100,11 @@ const Button = defineStyleConfig({
     },
     blue: {
       borderRadius: 'md',
-      bg: '#3370FF',
+      bg: '#3261ce',
       color: 'white',
       fontSize: 'sm',
       _hover: {
-        bg: '#145BFF'
+        bg: '#3261ce'
       }
     }
   },
@@ -268,14 +268,26 @@ export const theme = extendTheme({
       100: '#f0f7ff',
       200: '#EBF7FD',
       300: '#d6e8ff',
-      400: '#adceff',
-      500: '#85b1ff',
-      600: '#4e83fd',
-      700: '#3370ff',
-      800: '#2152d9',
-      900: '#1237b3',
-      1000: '#07228c'
+      400: '#3261ce',
+      500: '#3261ce',
+      600: '#3261ce',
+      700: '#3261ce',
+      800: '#3261ce',
+      900: '#3261ce',
+      1000: '#3261ce'
     },
+    // myBlue: {
+    //   100: '#f0f7ff',
+    //   200: '#EBF7FD',
+    //   300: '#d6e8ff',
+    //   400: '#adceff',
+    //   500: '#85b1ff',
+    //   600: '#4e83fd',
+    //   700: '#3370ff',
+    //   800: '#2152d9',
+    //   900: '#1237b3',
+    //   1000: '#07228c'
+    // },
     myRead: {
       600: '#ff4d4f'
     }

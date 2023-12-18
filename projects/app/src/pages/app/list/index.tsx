@@ -79,7 +79,7 @@ const MyApps = () => {
             {t('app.My Apps')}
           </Box>
         </Flex>
-        <Button leftIcon={<AddIcon />} variant={'base'} onClick={onOpenCreateModal}>
+        <Button leftIcon={<AddIcon />} variant={'blue'} onClick={onOpenCreateModal}>
           {t('common.New Create')}
         </Button>
       </Flex>
