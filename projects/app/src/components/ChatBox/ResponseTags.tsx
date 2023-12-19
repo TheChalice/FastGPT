@@ -71,7 +71,7 @@ const ResponseTags = ({ responseData = [] }: { responseData?: ChatHistoryItemRes
 
   const TagStyles: BoxProps = {
     mr: 2,
-    bg: 'transparent'
+    // bg: 'transparent'
   };
 
   return responseData.length === 0 ? null : (
@@ -170,7 +170,7 @@ const ResponseTags = ({ responseData = [] }: { responseData?: ChatHistoryItemRes
             {historyPreview.length > 0 && (
               <MyTooltip label={'点击查看完整对话记录'}>
                 <Tag
-                  colorSchema="green"
+                  colorSchema="greenQy"
                   cursor={'pointer'}
                   {...TagStyles}
                   onClick={() => setContextModalData(historyPreview)}
@@ -189,13 +189,13 @@ const ResponseTags = ({ responseData = [] }: { responseData?: ChatHistoryItemRes
 
         {isPc && runningTime > 0 && (
           <MyTooltip label={'模块运行时间和'}>
-            <Tag colorSchema="purple" cursor={'default'} {...TagStyles}>
+            <Tag colorSchema="purpleQy" cursor={'default'} {...TagStyles}>
               {runningTime}s
             </Tag>
           </MyTooltip>
         )}
         <MyTooltip label={'点击查看完整响应'}>
-          <Tag colorSchema="gray" cursor={'pointer'} {...TagStyles} onClick={onOpenWholeModal}>
+          <Tag colorSchema="orginQy" cursor={'pointer'} {...TagStyles} onClick={onOpenWholeModal}>
             {t('chat.Complete Response')}
           </Tag>
         </MyTooltip>

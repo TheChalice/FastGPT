@@ -3,7 +3,7 @@ import { Flex, type FlexProps } from '@chakra-ui/react';
 
 interface Props extends FlexProps {
   children: React.ReactNode | React.ReactNode[];
-  colorSchema?: 'blue' | 'green' | 'gray' | 'purple';
+  colorSchema?: 'blue' | 'green' | 'gray' | 'purple'| 'greenQy' | 'purpleQy' | 'orginQy' | 'blueQy';
 }
 
 const Tag = ({ children, colorSchema = 'blue', ...props }: Props) => {
@@ -18,6 +18,26 @@ const Tag = ({ children, colorSchema = 'blue', ...props }: Props) => {
         borderColor: '#67c13b',
         bg: '#f8fff8',
         color: '#67c13b'
+      },
+      greenQy: {
+        borderColor: 'transparent',
+        bg: '#e8fff0',
+        color: '#55bc8a'
+      },
+      blueQy: {
+        borderColor: 'transparent',
+        bg: '#e8f3ff',
+        color: '#3261ce'
+      },
+      purpleQy: {
+        borderColor: 'transparent',
+        bg: '#f3e8ff',
+        color: '#724bc5'
+      },
+      orginQy: {
+        borderColor: 'transparent',
+        bg: '#fff3e8',
+        color: '#e2682f'
       },
       purple: {
         borderColor: '#A558C9',

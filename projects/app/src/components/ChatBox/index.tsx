@@ -485,6 +485,16 @@ const ChatBox = (
     maxW: ['calc(100% - 25px)', 'calc(100% - 40px)']
   };
 
+  const qyMessageCardStyle: BoxProps = {
+    px: 4,
+    py: 3,
+    borderRadius: '0 8px 8px 8px',
+    boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+    display: 'inline-block',
+    width:'100%'
+    // maxW: ['calc(100% - 25px)', 'calc(100% - 40px)']
+  };
+
   const showEmpty = useMemo(
     () =>
       feConfigs?.show_emptyChat &&
@@ -551,17 +561,30 @@ const ChatBox = (
         <Box id="chat-container" maxW={['100%', '92%']} h={'100%'} mx={'auto'}>
           {showEmpty && <Empty />}
 
+          {/*{!!welcomeText && (*/}
+          {/*  <Box py={3}>*/}
+          {/*    /!* avatar *!/*/}
+          {/*    <ChatAvatar src={appAvatar} type={'AI'} />*/}
+          {/*    /!* message *!/*/}
+          {/*    <Box textAlign={'left'}>*/}
+          {/*      <Card order={2} mt={2} {...MessageCardStyle} bg={'white'}>*/}
+          {/*        <Markdown source={`~~~guide \n${welcomeText}`} isChatting={false} />*/}
+          {/*      </Card>*/}
+          {/*    </Box>*/}
+          {/*  </Box>*/}
+          {/*)}*/}
           {!!welcomeText && (
-            <Box py={3}>
+
+            <Flex w={'100%'}  mt={5}>
               {/* avatar */}
               <ChatAvatar src={appAvatar} type={'AI'} />
               {/* message */}
               <Box textAlign={'left'}>
-                <Card order={2} mt={2} {...MessageCardStyle} bg={'white'}>
+                <Card order={2} mt={2} ml={['6px', 2]} {...MessageCardStyle}  bg={'#eff4f9'}>
                   <Markdown source={`~~~guide \n${welcomeText}`} isChatting={false} />
                 </Card>
               </Box>
-            </Box>
+            </Flex>
           )}
 
           {/* variable input */}
@@ -680,196 +703,398 @@ const ChatBox = (
           {/*        </div>*/}
           {/*    )*/}
           {/*}*/}
+
           {/* chat history */}
+          {/*<Box id={'history'}>*/}
+          {/*  {chatHistory.map((item, index) => (*/}
+          {/*    <Box key={item.dataId} py={5}>*/}
+          {/*      {item.obj === 'Human' && (*/}
+          {/*        <>*/}
+          {/*          /!* control icon *!/*/}
+          {/*          <Flex w={'100%'} alignItems={'center'} justifyContent={'flex-end'}>*/}
+          {/*            <ChatController*/}
+          {/*              chat={item}*/}
+          {/*              onDelete={*/}
+          {/*                onDelMessage*/}
+          {/*                  ? () => {*/}
+          {/*                      delOneMessage({ dataId: item.dataId, index });*/}
+          {/*                    }*/}
+          {/*                  : undefined*/}
+          {/*              }*/}
+          {/*              onRetry={() => retryInput(index)}*/}
+          {/*            />*/}
+          {/*            <ChatAvatar src={userAvatar} type={'Human'} />*/}
+          {/*          </Flex>*/}
+          {/*          /!* content *!/*/}
+          {/*          <Box mt={['6px', 2]} textAlign={'right'}>*/}
+          {/*            <Card*/}
+          {/*              className="markdown"*/}
+          {/*              whiteSpace={'pre-wrap'}*/}
+          {/*              {...MessageCardStyle}*/}
+          {/*              bg={'myBlue.300'}*/}
+          {/*              borderRadius={'8px 0 8px 8px'}*/}
+          {/*              textAlign={'left'}*/}
+          {/*            >*/}
+          {/*              <Markdown source={item.value} isChatting={false} />*/}
+          {/*            </Card>*/}
+          {/*          </Box>*/}
+          {/*        </>*/}
+          {/*      )}*/}
+          {/*      {item.obj === 'AI' && (*/}
+          {/*        <>*/}
+          {/*          /!* control icon *!/*/}
+          {/*          <Flex w={'100%'} alignItems={'center'}>*/}
+          {/*            <ChatAvatar src={appAvatar} type={'AI'} />*/}
+          {/*            <ChatController*/}
+          {/*              ml={2}*/}
+          {/*              chat={item}*/}
+          {/*              setChatHistory={setChatHistory}*/}
+          {/*              display={index === chatHistory.length - 1 && isChatting ? 'none' : 'flex'}*/}
+          {/*              showVoiceIcon={showVoiceIcon}*/}
+          {/*              ttsConfig={ttsConfig}*/}
+          {/*              onDelete={*/}
+          {/*                onDelMessage*/}
+          {/*                  ? () => {*/}
+          {/*                      delOneMessage({ dataId: item.dataId, index });*/}
+          {/*                    }*/}
+          {/*                  : undefined*/}
+          {/*              }*/}
+          {/*              onMark={*/}
+          {/*                showMarkIcon*/}
+          {/*                  ? () => {*/}
+          {/*                      if (!item.dataId) return;*/}
+          {/*                      if (item.adminFeedback) {*/}
+          {/*                        setAdminMarkData({*/}
+          {/*                          chatItemId: item.dataId,*/}
+          {/*                          datasetId: item.adminFeedback.datasetId,*/}
+          {/*                          collectionId: item.adminFeedback.collectionId,*/}
+          {/*                          dataId: item.adminFeedback.dataId,*/}
+          {/*                          q: item.adminFeedback.q || chatHistory[index - 1]?.value || '',*/}
+          {/*                          a: item.adminFeedback.a*/}
+          {/*                        });*/}
+          {/*                      } else {*/}
+          {/*                        setAdminMarkData({*/}
+          {/*                          chatItemId: item.dataId,*/}
+          {/*                          q: chatHistory[index - 1]?.value || '',*/}
+          {/*                          a: item.value*/}
+          {/*                        });*/}
+          {/*                      }*/}
+          {/*                    }*/}
+          {/*                  : undefined*/}
+          {/*              }*/}
+          {/*              onReadFeedback={*/}
+          {/*                feedbackType === FeedbackTypeEnum.admin*/}
+          {/*                  ? () =>*/}
+          {/*                      setReadFeedbackData({*/}
+          {/*                        chatItemId: item.dataId || '',*/}
+          {/*                        content: item.userFeedback || '',*/}
+          {/*                        isMarked: !!item.adminFeedback*/}
+          {/*                      })*/}
+          {/*                  : undefined*/}
+          {/*              }*/}
+          {/*              onFeedback={*/}
+          {/*                feedbackType === FeedbackTypeEnum.user*/}
+          {/*                  ? item.userFeedback*/}
+          {/*                    ? () => {*/}
+          {/*                        if (!item.dataId) return;*/}
+          {/*                        setChatHistory((state) =>*/}
+          {/*                          state.map((chatItem) =>*/}
+          {/*                            chatItem.dataId === item.dataId*/}
+          {/*                              ? { ...chatItem, userFeedback: undefined }*/}
+          {/*                              : chatItem*/}
+          {/*                          )*/}
+          {/*                        );*/}
+          {/*                        try {*/}
+          {/*                          userUpdateChatFeedback({ chatItemId: item.dataId });*/}
+          {/*                        } catch (error) {}*/}
+          {/*                      }*/}
+          {/*                    : () => setFeedbackId(item.dataId)*/}
+          {/*                  : undefined*/}
+          {/*              }*/}
+          {/*            />*/}
+          {/*            /!* chatting status *!/*/}
+          {/*            {statusBoxData && index === chatHistory.length - 1 && (*/}
+          {/*              <Flex*/}
+          {/*                ml={3}*/}
+          {/*                alignItems={'center'}*/}
+          {/*                px={3}*/}
+          {/*                py={'1px'}*/}
+          {/*                borderRadius="md"*/}
+          {/*                border={theme.borders.base}*/}
+          {/*              >*/}
+          {/*                <Box*/}
+          {/*                  className={styles.statusAnimation}*/}
+          {/*                  bg={statusBoxData.bg}*/}
+          {/*                  w="8px"*/}
+          {/*                  h="8px"*/}
+          {/*                  borderRadius={'50%'}*/}
+          {/*                  mt={'1px'}*/}
+          {/*                ></Box>*/}
+          {/*                <Box ml={2} color={'myGray.600'}>*/}
+          {/*                  {statusBoxData.name}*/}
+          {/*                </Box>*/}
+          {/*              </Flex>*/}
+          {/*            )}*/}
+          {/*          </Flex>*/}
+          {/*          /!* content *!/*/}
+          {/*          <Box textAlign={'left'} mt={['6px', 2]}>*/}
+          {/*            <Card bg={'white'} {...MessageCardStyle}>*/}
+          {/*              <Markdown*/}
+          {/*                source={item.value}*/}
+          {/*                isChatting={index === chatHistory.length - 1 && isChatting}*/}
+          {/*              />*/}
+          {/*              <ResponseTags responseData={item.responseData} />*/}
+          {/*              /!* question guide *!/*/}
+          {/*              {index === chatHistory.length - 1 &&*/}
+          {/*                !isChatting &&*/}
+          {/*                questionGuides.length > 0 && (*/}
+          {/*                  <Box mt={2}>*/}
+          {/*                    <ChatBoxDivider*/}
+          {/*                      icon="core/chat/QGFill"*/}
+          {/*                      text={t('chat.Question Guide Tips')}*/}
+          {/*                    />*/}
+          {/*                    <Flex alignItems={'center'} flexWrap={'wrap'} gap={2}>*/}
+          {/*                      {questionGuides.map((item) => (*/}
+          {/*                        <Button*/}
+          {/*                          key={item}*/}
+          {/*                          borderRadius={'md'}*/}
+          {/*                          variant={'outline'}*/}
+          {/*                          colorScheme={'gray'}*/}
+          {/*                          size={'xs'}*/}
+          {/*                          whiteSpace={'pre-wrap'}*/}
+          {/*                          h={'auto'}*/}
+          {/*                          py={1}*/}
+          {/*                          onClick={() => {*/}
+          {/*                            resetInputVal(item);*/}
+          {/*                          }}*/}
+          {/*                        >*/}
+          {/*                          {item}*/}
+          {/*                        </Button>*/}
+          {/*                      ))}*/}
+          {/*                    </Flex>*/}
+          {/*                  </Box>*/}
+          {/*                )}*/}
+          {/*              /!* admin mark content *!/*/}
+          {/*              {showMarkIcon && item.adminFeedback && (*/}
+          {/*                <Box>*/}
+          {/*                  <Flex alignItems={'center'} py={2}>*/}
+          {/*                    <MyIcon name={'core/app/markLight'} w={'14px'} color={'myGray.900'} />*/}
+          {/*                    <Box ml={2} color={'myGray.500'}>*/}
+          {/*                      {t('chat.Admin Mark Content')}*/}
+          {/*                    </Box>*/}
+          {/*                    <Box h={'1px'} bg={'myGray.300'} flex={'1'} />*/}
+          {/*                  </Flex>*/}
+          {/*                  <Box whiteSpace={'pre'}>{`${item.adminFeedback.q || ''}${*/}
+          {/*                    item.adminFeedback.a ? `\n${item.adminFeedback.a}` : ''*/}
+          {/*                  }`}</Box>*/}
+          {/*                </Box>*/}
+          {/*              )}*/}
+          {/*            </Card>*/}
+          {/*          </Box>*/}
+          {/*        </>*/}
+          {/*      )}*/}
+          {/*    </Box>*/}
+          {/*  ))}*/}
+          {/*</Box>*/}
           <Box id={'history'}>
             {chatHistory.map((item, index) => (
-              <Box key={item.dataId} py={5}>
-                {item.obj === 'Human' && (
-                  <>
-                    {/* control icon */}
-                    <Flex w={'100%'} alignItems={'center'} justifyContent={'flex-end'}>
-                      <ChatController
-                        chat={item}
-                        onDelete={
-                          onDelMessage
-                            ? () => {
-                                delOneMessage({ dataId: item.dataId, index });
-                              }
-                            : undefined
-                        }
-                        onRetry={() => retryInput(index)}
-                      />
-                      <ChatAvatar src={userAvatar} type={'Human'} />
-                    </Flex>
-                    {/* content */}
-                    <Box mt={['6px', 2]} textAlign={'right'}>
-                      <Card
-                        className="markdown"
-                        whiteSpace={'pre-wrap'}
-                        {...MessageCardStyle}
-                        bg={'myBlue.300'}
-                        borderRadius={'8px 0 8px 8px'}
-                        textAlign={'left'}
-                      >
-                        <Markdown source={item.value} isChatting={false} />
-                      </Card>
-                    </Box>
-                  </>
-                )}
-                {item.obj === 'AI' && (
-                  <>
-                    {/* control icon */}
-                    <Flex w={'100%'} alignItems={'center'}>
-                      <ChatAvatar src={appAvatar} type={'AI'} />
-                      <ChatController
-                        ml={2}
-                        chat={item}
-                        setChatHistory={setChatHistory}
-                        display={index === chatHistory.length - 1 && isChatting ? 'none' : 'flex'}
-                        showVoiceIcon={showVoiceIcon}
-                        ttsConfig={ttsConfig}
-                        onDelete={
-                          onDelMessage
-                            ? () => {
-                                delOneMessage({ dataId: item.dataId, index });
-                              }
-                            : undefined
-                        }
-                        onMark={
-                          showMarkIcon
-                            ? () => {
-                                if (!item.dataId) return;
-                                if (item.adminFeedback) {
-                                  setAdminMarkData({
-                                    chatItemId: item.dataId,
-                                    datasetId: item.adminFeedback.datasetId,
-                                    collectionId: item.adminFeedback.collectionId,
-                                    dataId: item.adminFeedback.dataId,
-                                    q: item.adminFeedback.q || chatHistory[index - 1]?.value || '',
-                                    a: item.adminFeedback.a
-                                  });
-                                } else {
-                                  setAdminMarkData({
-                                    chatItemId: item.dataId,
-                                    q: chatHistory[index - 1]?.value || '',
-                                    a: item.value
-                                  });
-                                }
-                              }
-                            : undefined
-                        }
-                        onReadFeedback={
-                          feedbackType === FeedbackTypeEnum.admin
-                            ? () =>
-                                setReadFeedbackData({
-                                  chatItemId: item.dataId || '',
-                                  content: item.userFeedback || '',
-                                  isMarked: !!item.adminFeedback
-                                })
-                            : undefined
-                        }
-                        onFeedback={
-                          feedbackType === FeedbackTypeEnum.user
-                            ? item.userFeedback
-                              ? () => {
-                                  if (!item.dataId) return;
-                                  setChatHistory((state) =>
-                                    state.map((chatItem) =>
-                                      chatItem.dataId === item.dataId
-                                        ? { ...chatItem, userFeedback: undefined }
-                                        : chatItem
-                                    )
-                                  );
-                                  try {
-                                    userUpdateChatFeedback({ chatItemId: item.dataId });
-                                  } catch (error) {}
-                                }
-                              : () => setFeedbackId(item.dataId)
-                            : undefined
-                        }
-                      />
-                      {/* chatting status */}
-                      {statusBoxData && index === chatHistory.length - 1 && (
-                        <Flex
-                          ml={3}
-                          alignItems={'center'}
-                          px={3}
-                          py={'1px'}
-                          borderRadius="md"
-                          border={theme.borders.base}
-                        >
-                          <Box
-                            className={styles.statusAnimation}
-                            bg={statusBoxData.bg}
-                            w="8px"
-                            h="8px"
-                            borderRadius={'50%'}
-                            mt={'1px'}
-                          ></Box>
-                          <Box ml={2} color={'myGray.600'}>
-                            {statusBoxData.name}
-                          </Box>
-                        </Flex>
-                      )}
-                    </Flex>
-                    {/* content */}
-                    <Box textAlign={'left'} mt={['6px', 2]}>
-                      <Card bg={'white'} {...MessageCardStyle}>
-                        <Markdown
-                          source={item.value}
-                          isChatting={index === chatHistory.length - 1 && isChatting}
-                        />
-                        <ResponseTags responseData={item.responseData} />
-                        {/* question guide */}
-                        {index === chatHistory.length - 1 &&
-                          !isChatting &&
-                          questionGuides.length > 0 && (
-                            <Box mt={2}>
-                              <ChatBoxDivider
-                                icon="core/chat/QGFill"
-                                text={t('chat.Question Guide Tips')}
+                <Box key={item.dataId} py={5}>
+                  {item.obj === 'Human' && (
+                      <>
+                        {/* control icon */}
+                        <Flex w={'100%'}  justifyContent={'flex-end'}>
+
+                          <Box  w={'100%'}  mr={['6px', 2]} textAlign={'right'}>
+                            <Card
+                                className="markdown"
+                                whiteSpace={'pre-wrap'}
+                                {...MessageCardStyle}
+                                bg={'#eff4f9'}
+                                borderRadius={'8px 0 8px 8px'}
+                                textAlign={'left'}
+                            >
+                              <Markdown source={item.value} isChatting={false} />
+                            </Card>
+                            <div className={styles.chatHumanzujian}>
+                              <ChatController
+                                  chat={item}
+                                  onDelete={
+                                    onDelMessage
+                                        ? () => {
+                                          delOneMessage({ dataId: item.dataId, index });
+                                        }
+                                        : undefined
+                                  }
+                                  onRetry={() => retryInput(index)}
                               />
-                              <Flex alignItems={'center'} flexWrap={'wrap'} gap={2}>
-                                {questionGuides.map((item) => (
-                                  <Button
-                                    key={item}
-                                    borderRadius={'md'}
-                                    variant={'outline'}
-                                    colorScheme={'gray'}
-                                    size={'xs'}
-                                    whiteSpace={'pre-wrap'}
-                                    h={'auto'}
-                                    py={1}
-                                    onClick={() => {
-                                      resetInputVal(item);
-                                    }}
-                                  >
-                                    {item}
-                                  </Button>
-                                ))}
-                              </Flex>
-                            </Box>
-                          )}
-                        {/* admin mark content */}
-                        {showMarkIcon && item.adminFeedback && (
-                          <Box>
-                            <Flex alignItems={'center'} py={2}>
-                              <MyIcon name={'core/app/markLight'} w={'14px'} color={'myGray.900'} />
-                              <Box ml={2} color={'myGray.500'}>
-                                {t('chat.Admin Mark Content')}
-                              </Box>
-                              <Box h={'1px'} bg={'myGray.300'} flex={'1'} />
-                            </Flex>
-                            <Box whiteSpace={'pre'}>{`${item.adminFeedback.q || ''}${
-                              item.adminFeedback.a ? `\n${item.adminFeedback.a}` : ''
-                            }`}</Box>
+                            </div>
+
                           </Box>
-                        )}
-                      </Card>
-                    </Box>
-                  </>
-                )}
-              </Box>
+                          <ChatAvatar src={userAvatar} type={'Human'} />
+
+                        </Flex>
+
+                      </>
+                  )}
+                  {item.obj === 'AI' && (
+                      <>
+                        {/* control icon */}
+
+                        <Flex w={'100%'} >
+                          <ChatAvatar src={appAvatar} type={'AI'} />
+                          <Box w={'100%'} ml={['6px', 2]} textAlign={'left'} >
+                            <Card  bg={'#eff4f9'} {...qyMessageCardStyle}>
+                              <Markdown
+                                  source={item.value}
+                                  isChatting={index === chatHistory.length - 1 && isChatting}
+                              />
+                              <ResponseTags responseData={item.responseData} />
+                              {/* question guide */}
+                              {index === chatHistory.length - 1 &&
+                                  !isChatting &&
+                                  questionGuides.length > 0 && (
+                                      <Box mt={2}>
+                                        <ChatBoxDivider
+                                            icon="core/chat/QGFill"
+                                            text={t('chat.Question Guide Tips')}
+                                        />
+                                        <Flex alignItems={'center'} flexWrap={'wrap'} gap={2}>
+                                          {questionGuides.map((item) => (
+                                              <Button
+                                                  key={item}
+                                                  borderRadius={'md'}
+                                                  variant={'outline'}
+                                                  colorScheme={'blue'}
+                                                  size={'xs'}
+                                                  whiteSpace={'pre-wrap'}
+                                                  h={'auto'}
+                                                  py={1}
+                                                  onClick={() => {
+                                                    resetInputVal(item);
+                                                  }}
+                                              >
+                                                {item}
+                                              </Button>
+                                          ))}
+                                        </Flex>
+                                      </Box>
+                                  )}
+                              {/* admin mark content */}
+                              {showMarkIcon && item.adminFeedback && (
+                                  <Box>
+                                    <Flex alignItems={'center'} py={2}>
+                                      <MyIcon name={'core/app/markLight'} w={'14px'} color={'myGray.900'} />
+                                      <Box ml={2} color={'myGray.500'}>
+                                        {t('chat.Admin Mark Content')}
+                                      </Box>
+                                      <Box h={'1px'} bg={'myGray.300'} flex={'1'} />
+                                    </Flex>
+                                    <Box whiteSpace={'pre'}>{`${item.adminFeedback.q || ''}${
+                                        item.adminFeedback.a ? `\n${item.adminFeedback.a}` : ''
+                                    }`}</Box>
+                                  </Box>
+                              )}
+                            </Card>
+                            <div className={styles.chatAizujian}>
+                              <ChatController
+                                  ml={2}
+                                  chat={item}
+                                  setChatHistory={setChatHistory}
+                                  display={index === chatHistory.length - 1 && isChatting ? 'none' : 'flex'}
+                                  showVoiceIcon={showVoiceIcon}
+                                  ttsConfig={ttsConfig}
+                                  onDelete={
+                                    onDelMessage
+                                        ? () => {
+                                          delOneMessage({ dataId: item.dataId, index });
+                                        }
+                                        : undefined
+                                  }
+                                  onMark={
+                                    showMarkIcon
+                                        ? () => {
+                                          if (!item.dataId) return;
+                                          if (item.adminFeedback) {
+                                            setAdminMarkData({
+                                              chatItemId: item.dataId,
+                                              datasetId: item.adminFeedback.datasetId,
+                                              collectionId: item.adminFeedback.collectionId,
+                                              dataId: item.adminFeedback.dataId,
+                                              q: item.adminFeedback.q || chatHistory[index - 1]?.value || '',
+                                              a: item.adminFeedback.a
+                                            });
+                                          } else {
+                                            setAdminMarkData({
+                                              chatItemId: item.dataId,
+                                              q: chatHistory[index - 1]?.value || '',
+                                              a: item.value
+                                            });
+                                          }
+                                        }
+                                        : undefined
+                                  }
+                                  onReadFeedback={
+                                    feedbackType === FeedbackTypeEnum.admin
+                                        ? () =>
+                                            setReadFeedbackData({
+                                              chatItemId: item.dataId || '',
+                                              content: item.userFeedback || '',
+                                              isMarked: !!item.adminFeedback
+                                            })
+                                        : undefined
+                                  }
+                                  onFeedback={
+                                    feedbackType === FeedbackTypeEnum.user
+                                        ? item.userFeedback
+                                            ? () => {
+                                              if (!item.dataId) return;
+                                              setChatHistory((state) =>
+                                                  state.map((chatItem) =>
+                                                      chatItem.dataId === item.dataId
+                                                          ? { ...chatItem, userFeedback: undefined }
+                                                          : chatItem
+                                                  )
+                                              );
+                                              try {
+                                                userUpdateChatFeedback({ chatItemId: item.dataId });
+                                              } catch (error) {}
+                                            }
+                                            : () => setFeedbackId(item.dataId)
+                                        : undefined
+                                  }
+                              />
+
+                              {/* chatting status */}
+                              {statusBoxData && index === chatHistory.length - 1 && (
+                                  <Flex
+                                      ml={3}
+                                      alignItems={'center'}
+                                      px={3}
+                                      py={'1px'}
+                                      borderRadius="md"
+                                      border={theme.borders.base}
+                                  >
+                                    <Box
+                                        className={styles.statusAnimation}
+                                        bg={statusBoxData.bg}
+                                        w="8px"
+                                        h="8px"
+                                        borderRadius={'50%'}
+                                        mt={'1px'}
+                                    ></Box>
+                                    <Box ml={2} color={'myGray.600'}>
+                                      {statusBoxData.name}
+                                    </Box>
+                                  </Flex>
+                              )}
+                            </div>
+                          </Box>
+
+                        </Flex>
+
+                      </>
+                  )}
+                </Box>
             ))}
           </Box>
         </Box>
@@ -1141,14 +1366,14 @@ function ChatController({
     ttsConfig
   });
   const controlIconStyle = {
-    w: '14px',
+    w: '12px',
     cursor: 'pointer',
     p: 1,
     bg: 'white',
     borderRadius: 'lg',
     boxShadow: '0 0 5px rgba(0,0,0,0.1)',
     border: theme.borders.base,
-    mr: 3
+    ml: 1
   };
   const controlContainerStyle = {
     className: 'control',
