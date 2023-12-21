@@ -191,7 +191,8 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
         userChatInput: question.value
       },
       stream,
-      detail
+      detail,
+      req
     });
     // console.log('user', user.username);
     const customTitle= user.username;

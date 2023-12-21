@@ -72,18 +72,6 @@ const Login = () => {
     [lastRoute, router, setLastChatId, setLastChatAppId, setUserInfo]
   );
 
-  // function DynamicComponent({ type }: { type: `${PageTypeEnum}` }) {
-  //   const TypeMap = {
-  //     [PageTypeEnum.login]: LoginForm,
-  //     [PageTypeEnum.register]: RegisterForm,
-  //     [PageTypeEnum.forgetPassword]: ForgetPasswordForm
-  //   };
-  //
-  //   const Component = TypeMap[type];
-  //
-  //   return <Component setPageType={setPageType} loginSuccess={loginSuccess} />;
-  // }
-
   useEffect(() => {
     clearToken();
       const urlParams = new URLSearchParams(window.location.search);

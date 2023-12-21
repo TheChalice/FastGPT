@@ -2,8 +2,9 @@ import type { moduleDispatchResType } from '@fastgpt/global/core/chat/type.d';
 import type { ModuleDispatchProps } from '@/types/core/chat/type';
 import { ModuleInputKeyEnum, ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { URL } from 'url';
+import {ModulejtDispatchProps} from "@/types/core/chat/type";
 
-export type HttpRequestProps = ModuleDispatchProps<{
+export type HttpRequestProps = ModulejtDispatchProps<{
   [ModuleInputKeyEnum.httpUrl]: string;
   [ModuleInputKeyEnum.httpHeader]?: string;
   [key: string]: any;
@@ -18,9 +19,15 @@ export const dispatchHttptestRequest = async (props: Record<string, any>): Promi
   const {
     chatId,
     variables,
-    inputs: { url,urlheader, ...body }
+    inputs: { url,urlheader, ...body },
+    req
   } = props as HttpRequestProps;
   // console.log('urlheader', urlheader);
+  // console.log('props',props.res);
+  // if (req) {
+  //   console.log('Qytoken', req.headers.qytoken);
+  // }
+
   const requestBody = {
     ...body,
     chatId,
@@ -29,12 +36,16 @@ export const dispatchHttptestRequest = async (props: Record<string, any>): Promi
   // console.log('requestBody', requestBody);
   try {
     let response;
-    if (urlheader) {
-      response = await fetchData({
-        url,
-        body: requestBody,
-        urlheader
-      });
+    if (req&&req.headers&&req.headers.qytoken) {
+      const qytoken = req.headers.qytoken
+      if (typeof qytoken === "string") {
+        response = await fetchData({
+          url,
+          body: requestBody,
+          qytoken
+        });
+      }
+
     }else {
       response = await fetchData({
         url,
@@ -66,11 +77,11 @@ export const dispatchHttptestRequest = async (props: Record<string, any>): Promi
 async function fetchData({
   url,
   body,
-  urlheader
+                           qytoken
 }: {
   url: string;
   body: Record<string, any>;
-  urlheader?: string;
+  qytoken?: string;
 }): Promise<Record<string, any>> {
   // const qyToken = localStorage.getItem('qyToken');
 
@@ -96,14 +107,18 @@ async function fetchData({
 
   // const qyToken = prameurl.searchParams.get('qyToken');
 
-  if (urlheader) {
+  if (qytoken) {
 
-    let headers=parseHeader(urlheader)
-    headers['Content-Type']='application/json'
-    console.log('headers', headers);
+    // let headers=parseHeader()
+    // headers['Content-Type']='application/json'
+    // headers['Content-Type']=qytoken
+    // console.log('headers', headers);
     const response = await fetch(url, {
       method: 'POST',
-      headers: headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': qytoken,
+      },
       body: JSON.stringify(body)
     }).then((res) => res.json());
 

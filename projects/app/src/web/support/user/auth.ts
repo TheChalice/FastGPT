@@ -18,3 +18,8 @@ export const getToken = () => {
   if (typeof window === 'undefined') return '';
   return localStorage.getItem(tokenKey) || '';
 };
+
+export const getqyToken = () => {
+  if (typeof window === 'undefined') return '';
+  return localStorage.getItem('qyToken') || '';
+};

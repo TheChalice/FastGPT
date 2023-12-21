@@ -23,7 +23,6 @@ import { useUserStore } from '@/web/support/user/useUserStore';
 import { useQuery } from '@tanstack/react-query';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
-import styles from "@/components/ChatBox/index.module.scss";
 
 type HistoryItemType = {
   id: string;
@@ -72,24 +71,7 @@ const ChatHistorySlider = ({
   const [currentTab, setCurrentTab] = useState<`${TabEnum}`>(TabEnum.history);
 
   const isShare = useMemo(() => !appId || !userInfo, [appId, userInfo]);
-  const [introList, setIntroList] = useState<any[]>([
-    {
-      title: '中国移动',
-      qs: '请解释什么是"5G网络客户渗透率"'
-    },
-    {
-      title: '中国移动1',
-      qs: '通服收入如何?'
-    },
-    {
-      title: '中国移动2',
-      qs: '帮我分析一下杭州宽带发展情况怎么样?'
-    },
-    {
-      title: '中国移动3',
-      qs: '给我写一下近3个月宽带网络质量的SQL?'
-    }
-  ]);
+
   // custom title edit
   const { onOpenModal, EditModal: EditTitleModal } = useEditTitle({
     title: '自定义历史记录标题',
@@ -180,35 +162,20 @@ const ChatHistorySlider = ({
           {t('chat.New Chat')}
         </Button>
 
-        {/*{(isPc || isShare) && (*/}
-        {/*  <IconButton*/}
-        {/*    ml={3}*/}
-        {/*    h={'100%'}*/}
-        {/*    variant={'base'}*/}
-        {/*    aria-label={''}*/}
-        {/*    borderRadius={'xl'}*/}
-        {/*    onClick={openConfirm(onClearHistory)}*/}
-        {/*  >*/}
-        {/*    <MyIcon name={'clear'} w={'16px'} />*/}
-        {/*  </IconButton>*/}
-        {/*)}*/}
+        {(isPc || isShare) && (
+          <IconButton
+            ml={3}
+            h={'100%'}
+            variant={'base'}
+            aria-label={''}
+            borderRadius={'xl'}
+            onClick={openConfirm(onClearHistory)}
+          >
+            <MyIcon name={'clear'} w={'16px'} />
+          </IconButton>
+        )}
       </Flex>
-      <div className={styles.sarderbarlist}>
-        {introList.map((item,i) => {
-          return (
-              <div
-                  key={i}
-                  className={styles.sarderbarlistitem}
-                  onClick={() => onChangeChat()}>
-                <Avatar mr={2} src="/icon/logo.svg" w={['20px', '20px']} />
-                {item.title}
-              </div>
-          )
-        })}
-      </div>
-      <div className={styles.sarderbartitle}>
-        <span>历史对话</span><span>{concatHistory.length}</span>
-      </div>
+
       <Box flex={'1 0 0'} h={0} px={[2, 5]} overflow={'overlay'}>
         {/* chat history */}
         {(currentTab === TabEnum.history || isPc) && (

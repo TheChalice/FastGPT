@@ -52,12 +52,12 @@ export const HttptestModule: FlowModuleTemplateType = {
     },
     {
       key: ModuleInputKeyEnum.httpHeader,
-      value: `X-Authorization:${qyToken}`,
+      value: '',
       type: FlowNodeInputTypeEnum.input,
       valueType: ModuleDataTypeEnum.string,
       label: '请求header',
       description: '请求header对象',
-      placeholder: 'Authorization:XXX',
+      placeholder: '输入请求header，例如Authorization:XXX',
       required: false,
       showTargetInApp: false,
       showTargetInPlugin: false

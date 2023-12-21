@@ -113,4 +113,30 @@
     }
 
   }
+
+}
+.sarderbarlist {
+  width: 100%;
+  padding: 0 20px;
+  .sarderbarlistitem {
+    display: flex;
+    height: 36px;
+    border-radius: 0.75rem;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    &:hover {
+      background-color: #DEE0E2;
+    }
+  }
+
+}
+.sarderbartitle {
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  justify-content: space-between;
+  color: #79879c;
+  padding: 0px 30px;
+  line-height: 40px;
+  background: transparent;
 }

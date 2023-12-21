@@ -63,7 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         userChatInput: prompt
       },
       stream: true,
-      detail: true
+      detail: true,
+      req
     });
 
     responseWrite({

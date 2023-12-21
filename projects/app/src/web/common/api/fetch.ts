@@ -3,7 +3,7 @@ import { getErrText } from '@fastgpt/global/common/error/utils';
 import { parseStreamChunk, SSEParseData } from '@/utils/sse';
 import type { ChatHistoryItemResType } from '@fastgpt/global/core/chat/api.d';
 import { StartChatFnProps } from '@/components/ChatBox';
-import { getToken } from '@/web/support/user/auth';
+import { getToken,getqyToken } from '@/web/support/user/auth';
 import { ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 
 type StreamFetchProps = {
@@ -28,7 +28,8 @@ export const streamFetch = ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          token: getToken()
+          token: getToken(),
+          qytoken: getqyToken(),
         },
         signal: abortSignal.signal,
         body: JSON.stringify({

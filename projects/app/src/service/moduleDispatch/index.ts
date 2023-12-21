@@ -1,8 +1,8 @@
-import { NextApiResponse } from 'next';
+import {NextApiRequest, NextApiResponse} from 'next';
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { RunningModuleItemType } from '@/types/app';
-import { ModuleDispatchProps } from '@/types/core/chat/type';
+import {ModuleDispatchProps, ModulejtDispatchProps} from '@/types/core/chat/type';
 import { ChatHistoryItemResType } from '@fastgpt/global/core/chat/api';
 import { FlowNodeTypeEnum } from '@fastgpt/global/core/module/node/constant';
 import { ModuleItemType } from '@fastgpt/global/core/module/type';
@@ -40,7 +40,8 @@ export async function dispatchModules({
   params = {},
   variables = {},
   stream = false,
-  detail = false
+  detail = false,
+                                        req,
 }: {
   res: NextApiResponse;
   teamId: string;
@@ -53,6 +54,7 @@ export async function dispatchModules({
   variables?: Record<string, any>;
   stream?: boolean;
   detail?: boolean;
+  req?:NextApiRequest;
 }) {
   // set sse response headers
   if (stream) {
@@ -176,6 +178,7 @@ export async function dispatchModules({
     module.inputs.forEach((item: any) => {
       params[item.key] = item.value;
     });
+
     const props: ModuleDispatchProps<Record<string, any>> = {
       res,
       teamId,
@@ -207,6 +210,23 @@ export async function dispatchModules({
         [FlowNodeTypeEnum.pluginOutput]: dispatchPluginOutput
       };
       if (callbackMap[module.flowType]) {
+        if (module.flowType === 'httptestRequest'&&req) {
+          const propstest: ModulejtDispatchProps<Record<string, any>> = {
+            res,
+            teamId,
+            tmbId,
+            user,
+            appId,
+            chatId,
+            stream,
+            detail,
+            variables,
+            outputs: module.outputs,
+            inputs: params,
+            req
+          };
+          return callbackMap[module.flowType](propstest);
+        }
         return callbackMap[module.flowType](props);
       }
       return {};
