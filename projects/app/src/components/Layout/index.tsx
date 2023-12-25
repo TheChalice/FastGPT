@@ -40,7 +40,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
   const router = useRouter();
   const { colorMode, setColorMode } = useColorMode();
   const { Loading } = useLoading();
-  const { loading, setScreenWidth, isPc, loadGitStar } = useSystemStore();
+  const { loading, setScreenWidth, isPc } = useSystemStore();
   const { userInfo } = useUserStore();
   const [showMessage, setShowMessage] = useState(true);
   const isChatPage = useMemo(
@@ -77,12 +77,11 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     window.addEventListener('resize', resize);
 
     resize();
-    loadGitStar();
 
     return () => {
       window.removeEventListener('resize', resize);
     };
-  }, [loadGitStar, setScreenWidth]);
+  }, [setScreenWidth]);
 
   const { data: unread = 0 } = useQuery(['getUnreadCount'], getUnreadCount, {
     enabled: !!userInfo && !!feConfigs.isPlus,

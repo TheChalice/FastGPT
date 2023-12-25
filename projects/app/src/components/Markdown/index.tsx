@@ -220,36 +220,31 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 
   return (
       <div>
-        {isChart && (
-            <>
-              <ReactMarkdown
-                  components={chartRenderer}>
-              {markdown}
-              </ReactMarkdown>
-            </>
-        )}
-        {!isChart && (
-            <>
-              <ReactMarkdown
-                  className={`markdown ${styles.markdown}
-      ${isChatting ? (source === '' ? styles.waitingAnimation : styles.animation) : ''}
+          {isChart && (
+              <>
+                  <ReactMarkdown
+                      components={chartRenderer}>
+                      {markdown}
+                  </ReactMarkdown>
+              </>
+          )}
+          {!isChart && (
+              <>
+                  <ReactMarkdown
+                      className={`markdown ${styles.markdown}
+      ${isChatting ? `${formatSource ? styles.waitingAnimation : styles.animation}` : ''}
     `}
-                  remarkPlugins={[RemarkGfm, RemarkMath, RemarkBreaks]}
-                  rehypePlugins={[RehypeKatex]}
-                  // @ts-ignore
-                  components={components}
-                  linkTarget={'_blank'}
-              >
-                {formatSource}
-              </ReactMarkdown>
-            </>
-        )}
-
+                      remarkPlugins={[RemarkGfm, RemarkMath, RemarkBreaks]}
+                      rehypePlugins={[RehypeKatex]}
+                      // @ts-ignore
+                      components={components}
+                      linkTarget={'_blank'}
+                  >
+                      {formatSource}
+                  </ReactMarkdown>
+              </>
+          )}
       </div>
-
-
-
-
 
   );
 };
