@@ -7,6 +7,7 @@ export interface ResLogin {
 export interface MyObject {
   label: string;
   value: string;
+  qyoutput?:MyObject[]
 }
 
 export interface PromotionRecordType {

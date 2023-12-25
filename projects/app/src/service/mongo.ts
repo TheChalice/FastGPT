@@ -77,10 +77,10 @@ export function authQianyu(token: string) {
 
     // axios.get('http://10.19.90.46:18441/portal/newtest/jttest/chatbi/api/chat/opening?token='+token)
     const url=qianyuBaseUrl+'/qy/api/user/getUserName?token='+token
-    console.log('url',url);
+    //console.log('url',url);
     axios.get(url)
         .then((response) => {
-          console.log('response',response);
+          //console.log('response',response);
                 // console.log(data);
                 resolve(response.data.data || '');
         })

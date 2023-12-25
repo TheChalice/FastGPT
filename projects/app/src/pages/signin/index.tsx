@@ -83,9 +83,9 @@ const Login = () => {
           postqymodellist().then(function (res){
               // console.log('res', JSON.stringify(res));
               let selectlist=res
-              // selectlist.forEach(function (item){
-              //     item.value=item.value+'?qyToken='+token
-              // })
+              selectlist.forEach(function (item){
+                  item.qyoutput=[{label:'data',value:'data'},{label:'data1',value:'data1'}]
+              })
               localStorage.setItem('modellist',JSON.stringify(selectlist))
 
               // router.replace('/app/list');
