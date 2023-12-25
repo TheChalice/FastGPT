@@ -1,10 +1,7 @@
 # Install dependencies only when needed
 FROM node:18.15-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add libc6-compat
-RUN npm config set registry https://registry.npmmirror.com
-RUN npm install -g pnpm
-
+RUN apk add --no-cache libc6-compat && npm install -g pnpm
 WORKDIR /app
 
 ARG name
@@ -15,8 +12,6 @@ COPY ./packages ./packages
 COPY ./projects/$name/package.json ./projects/$name/package.json
 
 RUN [ -f pnpm-lock.yaml ] || (echo "Lockfile not found." && exit 1)
-
-RUN pnpm config set registry https://registry.yarnpkg.com
 
 RUN pnpm install
 
@@ -47,9 +42,7 @@ ARG name
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-RUN sed -i 's/https/http/' /etc/apk/repositories
-RUN apk add curl \
-  && apk add ca-certificates \
+RUN apk add --no-cache curl ca-certificates \
   && update-ca-certificates
 
 # copy running files

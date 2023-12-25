@@ -2,9 +2,9 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { RunningModuleItemType } from '@/types/app';
-import {ModuleDispatchProps, ModulejtDispatchProps} from '@/types/core/chat/type';
-import { ChatHistoryItemResType } from '@fastgpt/global/core/chat/api';
-import { FlowNodeTypeEnum } from '@fastgpt/global/core/module/node/constant';
+import { ModuleDispatchProps,ModulejtDispatchProps } from '@/types/core/chat/type';
+import type { ChatHistoryItemResType, ChatItemType } from '@fastgpt/global/core/chat/type.d';
+import { FlowNodeInputTypeEnum, FlowNodeTypeEnum } from '@fastgpt/global/core/module/node/constant';
 import { ModuleItemType } from '@fastgpt/global/core/module/type';
 import { UserType } from '@fastgpt/global/support/user/type';
 import { replaceVariable } from '@fastgpt/global/common/string/tools';
@@ -26,7 +26,6 @@ import { dispatchAppRequest } from './tools/runApp';
 import { dispatchRunPlugin } from './plugin/run';
 import { dispatchPluginInput } from './plugin/runInput';
 import { dispatchPluginOutput } from './plugin/runOutput';
-import { AuthUserTypeEnum } from '@fastgpt/global/support/permission/constant';
 
 /* running */
 export async function dispatchModules({
@@ -38,10 +37,11 @@ export async function dispatchModules({
   modules,
   chatId,
   params = {},
+  histories = [],
+  startParams = {},
   variables = {},
   stream = false,
-  detail = false,
-                                        req,
+  detail = false
 }: {
   res: NextApiResponse;
   teamId: string;
@@ -50,11 +50,13 @@ export async function dispatchModules({
   appId: string;
   modules: ModuleItemType[];
   chatId?: string;
-  params?: Record<string, any>;
+  histories: ChatItemType[];
+  startParams?: Record<string, any>;
   variables?: Record<string, any>;
   stream?: boolean;
   detail?: boolean;
   req?:NextApiRequest;
+  params?: Record<string, any>;
 }) {
   // set sse response headers
   if (stream) {
@@ -189,6 +191,7 @@ export async function dispatchModules({
       stream,
       detail,
       variables,
+      histories,
       outputs: module.outputs,
       inputs: params
     };
@@ -252,7 +255,12 @@ export async function dispatchModules({
 
   // start process width initInput
   const initModules = runningModules.filter((item) => initRunningModuleType[item.flowType]);
-  initModules.map((module) => moduleInput(module, params));
+  initModules.map((module) =>
+    moduleInput(module, {
+      ...startParams,
+      history: [] // abandon history field. History module will get histories from other fields.
+    })
+  );
   await checkModulesCanRun(initModules);
 
   // focus try to run pluginOutput
@@ -274,45 +282,54 @@ function loadModules(
   modules: ModuleItemType[],
   variables: Record<string, any>
 ): RunningModuleItemType[] {
-  return modules.map((module) => {
-    return {
-      moduleId: module.moduleId,
-      name: module.name,
-      flowType: module.flowType,
-      showStatus: module.showStatus,
-      inputs: module.inputs
-        .filter((item) => item.connected || item.value !== undefined) // filter unconnected target input
-        .map((item) => {
-          if (typeof item.value !== 'string') {
+  return modules
+    .filter((item) => {
+      return ![FlowNodeTypeEnum.userGuide].includes(item.moduleId as any);
+    })
+    .map((module) => {
+      return {
+        moduleId: module.moduleId,
+        name: module.name,
+        flowType: module.flowType,
+        showStatus: module.showStatus,
+        inputs: module.inputs
+          .filter(
+            (item) =>
+              item.type === FlowNodeInputTypeEnum.systemInput ||
+              item.connected ||
+              item.value !== undefined
+          ) // filter unconnected target input
+          .map((item) => {
+            if (typeof item.value !== 'string') {
+              return {
+                key: item.key,
+                value: item.value
+              };
+            }
+
+            // variables replace
+            const replacedVal = replaceVariable(item.value, variables);
+
             return {
               key: item.key,
-              value: item.value
+              value: replacedVal
             };
-          }
-
-          // variables replace
-          const replacedVal = replaceVariable(item.value, variables);
-
-          return {
+          }),
+        outputs: module.outputs
+          .map((item) => ({
             key: item.key,
-            value: replacedVal
-          };
-        }),
-      outputs: module.outputs
-        .map((item) => ({
-          key: item.key,
-          answer: item.key === ModuleOutputKeyEnum.answerText,
-          value: undefined,
-          targets: item.targets
-        }))
-        .sort((a, b) => {
-          // finish output always at last
-          if (a.key === ModuleOutputKeyEnum.finish) return 1;
-          if (b.key === ModuleOutputKeyEnum.finish) return -1;
-          return 0;
-        })
-    };
-  });
+            answer: item.key === ModuleOutputKeyEnum.answerText,
+            value: undefined,
+            targets: item.targets
+          }))
+          .sort((a, b) => {
+            // finish output always at last
+            if (a.key === ModuleOutputKeyEnum.finish) return 1;
+            if (b.key === ModuleOutputKeyEnum.finish) return -1;
+            return 0;
+          })
+      };
+    });
 }
 
 /* sse response modules staus */

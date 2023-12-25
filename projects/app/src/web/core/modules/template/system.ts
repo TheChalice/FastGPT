@@ -22,7 +22,6 @@ import { ModuleTemplateTypeEnum } from '@fastgpt/global/core/module/constants';
 export const appSystemModuleTemplates: FlowModuleTemplateType[] = [
   UserGuideModule,
   UserInputModule,
-  HistoryModule,
   AiChatModule,
   AssignedAnswerModule,
   DatasetSearchModule,
@@ -35,7 +34,6 @@ export const appSystemModuleTemplates: FlowModuleTemplateType[] = [
 export const pluginSystemModuleTemplates: FlowModuleTemplateType[] = [
   PluginInputModule,
   PluginOutputModule,
-  HistoryModule,
   AiChatModule,
   AssignedAnswerModule,
   DatasetSearchModule,
