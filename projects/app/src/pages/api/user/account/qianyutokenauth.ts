@@ -4,7 +4,7 @@ import { jsonRes } from '@fastgpt/service/common/response';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { createJWT, setCookie } from '@fastgpt/service/support/permission/controller';
 import { connectToDatabase,authQianyu } from '@/service/mongo';
-import { getUserDetail } from '@/service/support/user/controller';
+import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import type { PostLoginProps } from '@fastgpt/global/support/user/api.d';
 import {PostSigninProps} from "@fastgpt/global/support/user/api.d";
 
