@@ -7,7 +7,7 @@ import {
   useDisclosure,
   Card,
   MenuButton,
-  Image
+  Image, Button
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useDatasetStore } from '@/web/core/dataset/store/dataset';
@@ -134,27 +134,27 @@ const Kb = () => {
     <PageContainer isLoading={isFetching}>
       <Flex pt={3} px={5} alignItems={'center'}>
         {/* url path */}
-        <ParentPaths
-          paths={paths.map((path, i) => ({
-            parentId: path.parentId,
-            parentName: path.parentName
-          }))}
-          FirstPathDom={
-            <Flex flex={1} alignItems={'center'}>
-              <Image src={'/imgs/module/db.png'} alt={''} mr={2} h={'24px'} />
-              <Box className="textlg" letterSpacing={1} fontSize={'24px'} fontWeight={'bold'}>
-                {t('dataset.My Dataset')}
-              </Box>
-            </Flex>
-          }
-          onClick={(e) => {
-            router.push({
-              query: {
-                parentId: e
-              }
-            });
-          }}
-        />
+        {/*<ParentPaths*/}
+        {/*  paths={paths.map((path, i) => ({*/}
+        {/*    parentId: path.parentId,*/}
+        {/*    parentName: path.parentName*/}
+        {/*  }))}*/}
+        {/*  FirstPathDom={*/}
+        {/*    <Flex flex={1} alignItems={'center'}>*/}
+        {/*      <Image src={'/imgs/module/db.png'} alt={''} mr={2} h={'24px'} />*/}
+        {/*      <Box className="textlg" letterSpacing={1} fontSize={'24px'} fontWeight={'bold'}>*/}
+        {/*        {t('dataset.My Dataset')}*/}
+        {/*      </Box>*/}
+        {/*    </Flex>*/}
+        {/*  }*/}
+        {/*  onClick={(e) => {*/}
+        {/*    router.push({*/}
+        {/*      query: {*/}
+        {/*        parentId: e*/}
+        {/*      }*/}
+        {/*    });*/}
+        {/*  }}*/}
+        {/*/>*/}
         {/* create icon */}
         {userInfo?.team?.canWrite && (
           <MyMenu
@@ -162,6 +162,7 @@ const Kb = () => {
             width={120}
             Button={
               <MenuButton
+                  bg={'#3261ce'}
                 _hover={{
                   color: 'myBlue.600'
                 }}
@@ -174,8 +175,8 @@ const Kb = () => {
                   borderRadius={'md'}
                   cursor={'pointer'}
                 >
-                  <AddIcon mr={2} />
-                  <Box>{t('Create New')}</Box>
+                  <AddIcon color={'white'} mr={2} />
+                  <Box color={'white'}>{t('Create New')}知识库</Box>
                 </Flex>
               </MenuButton>
             }

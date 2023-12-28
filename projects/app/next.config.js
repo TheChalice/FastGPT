@@ -7,6 +7,7 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: process.env.NODE_ENV === 'development' ? false : true,
   compress: true,
+  // basePath: '/test',
   // async rewrites() {
   //   return [
   //     {

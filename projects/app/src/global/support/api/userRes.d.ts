@@ -4,10 +4,18 @@ export interface ResLogin {
   user: UserType;
   token: string;
 }
+
+interface Parameter {
+  name: string;
+  dataType: string;
+}
 export interface MyObject {
   label: string;
   value: string;
-  qyoutput?:MyObject[]
+  qyoutput?:MyObject[];
+  parameters?: { [key: string]: string; };
+  parametersarr?: Parameter[];
+
 }
 
 export interface PromotionRecordType {

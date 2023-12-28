@@ -84,7 +84,17 @@ const Login = () => {
               // console.log('res', JSON.stringify(res));
               let selectlist=res
               selectlist.forEach(function (item){
+
                   item.qyoutput=[{label:'data',value:'data'},{label:'data1',value:'data1'}]
+                  if (item.parameters) {
+                      item.parametersarr=[];
+                      for (const key in item.parameters) {
+                          if (item.parameters.hasOwnProperty(key)) {
+                              const value = item.parameters[key];
+                              item.parametersarr.push({name:key,dataType:value});
+                          }
+                      }
+                  }
               })
               localStorage.setItem('modellist',JSON.stringify(selectlist))
 
@@ -97,6 +107,9 @@ const Login = () => {
           })
           posttokenSingin({token}).then(function (res){
               localStorage.setItem('qyToken',token)
+              localStorage.setItem('qyconfig', JSON.stringify({
+                  docurl:'https://www.baidu.com/'
+              }))
               console.log('res', res);
               setLastChatId('');
               setLastChatAppId('');

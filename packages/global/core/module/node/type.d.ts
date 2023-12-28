@@ -34,7 +34,7 @@ export type FlowNodeInputItemType = {
   showTargetInPlugin?: boolean;
 
   placeholder?: string; // input,textarea
-  list?: { label: string; value: any, qyoutput?:any, parameters?:any }[]; // select
+  list?: { label: string; value: any, qyoutput?:any, parameters?:any,parametersarr?:any }[]; // select
   step?: number; // slider max?: number;
   max?: number;
   min?: number;

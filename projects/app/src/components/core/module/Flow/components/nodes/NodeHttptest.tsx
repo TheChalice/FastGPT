@@ -44,13 +44,13 @@ const NodeHttp = ({ data }: NodeProps<FlowModuleItemType>) => {
             if (data.inputs[1].value === item.value) {
               // console.log('data.inputs3', data.inputs);
 
-              if (item.parameters.length + 3 !== data.inputs.length) {
+              if (item.parametersarr&&item.parametersarr.length + 3 !== data.inputs.length) {
                 data.inputs=[data.inputs[0],data.inputs[1],data.inputs[2]];
                 if (item.parameters.length === 0) {
                   setIsActive(!isActive);
                   return
                 }
-                item.parameters.forEach(function (item:{name:string,dataType:string}){
+                item.parametersarr.forEach(function (item:{name:string,dataType:string}){
                   data.inputs.push( {
                     connected:false,
                     description: "",
@@ -65,7 +65,7 @@ const NodeHttp = ({ data }: NodeProps<FlowModuleItemType>) => {
                 setIsActive(!isActive);
               }
 
-              if (item.qyoutput) {
+              // if (item.qyoutput) {
 
 
                 // if (data.outputs.length===3)  {
@@ -87,9 +87,9 @@ const NodeHttp = ({ data }: NodeProps<FlowModuleItemType>) => {
 
 
 
-              }
+              // }
             }
-
+          //
           })
 
 

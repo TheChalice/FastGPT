@@ -69,7 +69,11 @@ const ApiKeyTable = ({ tips, appId }: { tips: string; appId?: string }) => {
     isLoading: isGetting,
     refetch
   } = useQuery(['getOpenApiKeys', appId], () => getOpenApiKeys({ appId }));
-
+  let qyconfig: { docurl?:string }={}
+  qyconfig = JSON.parse(localStorage.getItem('qyconfig')||'{}');
+  // if (qyconfig) {
+  //   console.log('qyconfig', qyconfig.docurl);
+  // }
   useEffect(() => {
     setBaseUrl(`${location.origin}/api`);
   }, []);
@@ -84,7 +88,7 @@ const ApiKeyTable = ({ tips, appId }: { tips: string; appId?: string }) => {
             </Box>
             {feConfigs.docUrl && (
               <Link
-                href={feConfigs.openAPIDocUrl || `${feConfigs.docUrl}/docs/development/openapi`}
+                href={qyconfig.docurl}
                 target={'_blank'}
                 ml={1}
                 color={'myBlue.600'}

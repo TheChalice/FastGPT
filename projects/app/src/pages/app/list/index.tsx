@@ -74,14 +74,17 @@ const MyApps = () => {
     <PageContainer isLoading={isFetching}>
       <Flex pt={3} px={5} alignItems={'center'}>
         <Flex flex={1} alignItems={'center'}>
-          <Image src={'/imgs/module/ai.svg'} alt={''} mr={2} h={'24px'} />
-          <Box className="textlg" letterSpacing={1} fontSize={['20px', '24px']} fontWeight={'bold'}>
-            {t('app.My Apps')}
-          </Box>
+          {/*<Image src={'/imgs/module/ai.svg'} alt={''} mr={2} h={'24px'} />*/}
+          {/*<Box className="textlg" letterSpacing={1} fontSize={['20px', '24px']} fontWeight={'bold'}>*/}
+          {/*  {t('app.My Apps')}*/}
+          {/*</Box>*/}
+          <Button leftIcon={<AddIcon />} variant={'blue'} onClick={onOpenCreateModal}>
+            {t('common.New Create')}应用
+          </Button>
         </Flex>
-        <Button leftIcon={<AddIcon />} variant={'blue'} onClick={onOpenCreateModal}>
-          {t('common.New Create')}
-        </Button>
+        {/*<Button leftIcon={<AddIcon />} variant={'blue'} onClick={onOpenCreateModal}>*/}
+        {/*  {t('common.New Create')}应用*/}
+        {/*</Button>*/}
       </Flex>
       <Grid
         p={5}
