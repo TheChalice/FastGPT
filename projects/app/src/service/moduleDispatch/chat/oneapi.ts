@@ -147,6 +147,10 @@ export const dispatchChatCompletion = async (props: ChatProps): Promise<ChatResp
         detail,
         stream: response
       });
+      console.log('answer', answer);
+      console.log('detail', detail);
+      console.log('response', response);
+
       // count tokens
       const completeMessages = filterMessages.concat({
         obj: ChatRoleEnum.AI,
