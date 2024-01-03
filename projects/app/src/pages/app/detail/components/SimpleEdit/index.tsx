@@ -109,7 +109,8 @@ function ConfigForm({
     //console.log('chatModelList', chatModelList);
     return chatModelList.map((item) => ({
       value: item.model,
-      label: `${item.name} (${formatPrice(item.price, 1000)} 元/1k tokens)`
+      label: `${item.name}`
+      // label: `${item.name} (${formatPrice(item.price, 1000)} 元/1k tokens)`
     }));
   }, [refresh]);
 

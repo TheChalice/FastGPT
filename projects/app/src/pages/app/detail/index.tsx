@@ -27,7 +27,8 @@ enum TabEnum {
   'adEdit' = 'adEdit',
   'outLink' = 'outLink',
   'logs' = 'logs',
-  'startChat' = 'startChat'
+  'startChat' = 'startChat',
+  'startqy' = 'startqy'
 }
 
 const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
@@ -57,7 +58,8 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
         : [{ label: '高级编排', id: TabEnum.adEdit, icon: 'settingLight' }]),
       { label: '外部使用', id: TabEnum.outLink, icon: 'shareLight' },
       { label: '对话日志', id: TabEnum.logs, icon: 'core/app/logsLight' },
-      { label: '立即对话', id: TabEnum.startChat, icon: 'chat' }
+      { label: '立即对话', id: TabEnum.startChat, icon: 'chat' },
+      { label: '多闻', id: TabEnum.startqy, icon: 'chat' }
     ],
     []
   );
@@ -118,6 +120,8 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
             onChange={(e: any) => {
               if (e === 'startChat') {
                 router.push(`/chat?appId=${appId}`);
+              }else if (e === 'startqy') {
+                  window.location.href = 'http://www.baidu.com'
               } else {
                 setCurrentTab(e);
               }
