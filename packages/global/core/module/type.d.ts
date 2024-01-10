@@ -111,9 +111,15 @@ export type ChatDispatchProps = {
   variables: Record<string, any>;
   stream: boolean;
   detail: boolean; // response detail
+  req?: NextApiRequest; // response detail
 };
 
 export type ModuleDispatchProps<T> = ChatDispatchProps & {
   outputs: RunningModuleItemType['outputs'];
   inputs: T;
+};
+export type ModulejtDispatchProps<T> = ChatDispatchProps & {
+  outputs: RunningModuleItemType['outputs'];
+  inputs: T;
+
 };

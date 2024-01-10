@@ -5,7 +5,10 @@ import { URL } from 'url';
 import {ModulejtDispatchProps} from "@/types/core/chat/type";
 
 export type HttpRequestProps = ModulejtDispatchProps<{
-  [ModuleInputKeyEnum.httpUrl]: string;
+  [ModuleInputKeyEnum.abandon_httpUrl]: string;
+  [ModuleInputKeyEnum.httpMethod]: string;
+  [ModuleInputKeyEnum.httpReqUrl]: string;
+  // [ModuleInputKeyEnum.httpHeader]: string;
   [ModuleInputKeyEnum.httpHeader]?: string;
   [key: string]: any;
 }>;
@@ -19,10 +22,10 @@ export const dispatchHttptestRequest = async (props: Record<string, any>): Promi
   const {
     chatId,
     variables,
-    inputs: { url,urlheader, ...body },
+    inputs: { url,system_httpReqUrl,urlheader, ...body },
     req
   } = props as HttpRequestProps;
-  // console.log('urlheader', urlheader);
+  console.log('system_httpReqUrl', system_httpReqUrl);
   // console.log('props',props.res);
   // if (req) {
   //   console.log('Qytoken', req.headers.qytoken);
@@ -40,7 +43,7 @@ export const dispatchHttptestRequest = async (props: Record<string, any>): Promi
       const qytoken = req.headers.qytoken
       if (typeof qytoken === "string") {
         response = await fetchData({
-          url,
+          system_httpReqUrl,
           body: requestBody,
           qytoken
         });
@@ -48,7 +51,7 @@ export const dispatchHttptestRequest = async (props: Record<string, any>): Promi
 
     }else {
       response = await fetchData({
-        url,
+        system_httpReqUrl,
         body: requestBody,
       });
     }
@@ -75,15 +78,16 @@ export const dispatchHttptestRequest = async (props: Record<string, any>): Promi
 };
 
 async function fetchData({
-  url,
+                           system_httpReqUrl,
   body,
                            qytoken
 }: {
-  url: string;
+  system_httpReqUrl: string;
   body: Record<string, any>;
   qytoken?: string;
 }): Promise<Record<string, any>> {
   // const qyToken = localStorage.getItem('qyToken');
+
 
   interface Headers {
     [key: string]: string;
@@ -112,8 +116,10 @@ async function fetchData({
     // let headers=parseHeader()
     // headers['Content-Type']='application/json'
     // headers['Content-Type']=qytoken
-    // console.log('headers', headers);
-    const response = await fetch(url, {
+    console.log('url', system_httpReqUrl);
+    console.log('qytoken', qytoken);
+
+    const response = await fetch(system_httpReqUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -124,7 +130,7 @@ async function fetchData({
 
     return response;
   }else {
-    const response = await fetch(url, {
+    const response = await fetch(system_httpReqUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

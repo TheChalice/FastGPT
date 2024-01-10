@@ -1,11 +1,16 @@
-import { FlowNodeInputTypeEnum, FlowNodeTypeEnum } from '../../node/constant';
-import { FlowModuleTemplateType } from '../../type.d';
-import { ModuleDataTypeEnum, ModuleInputKeyEnum, ModuleTemplateTypeEnum } from '../../constants';
-import { Input_Template_TFSwitch } from '../input';
-import { Output_Template_Finish } from '../output';
-
-let qyToken='';
-
+import {
+  FlowNodeInputTypeEnum,
+  FlowNodeOutputTypeEnum,
+  FlowNodeTypeEnum
+} from '../../node/constant';
+import { FlowModuleTemplateType } from '../../type';
+import { ModuleIOValueTypeEnum, ModuleInputKeyEnum, ModuleTemplateTypeEnum } from '../../constants';
+import {
+  Input_Template_AddInputParam,
+  Input_Template_DynamicInput,
+  Input_Template_Switch
+} from '../input';
+import { Output_Template_AddOutput, Output_Template_Finish } from '../output';
 
 let selectlist=[
   { label: '千语', value: 'http://10.1.251.110:6442/qy' },
@@ -15,18 +20,12 @@ let selectlist=[
 if (typeof window !== 'undefined') {
   // 只有在浏览器环境中才运行这段代码
   // console.log('localStorage', localStorage);
-  qyToken = localStorage.getItem('qyToken')||'';
   const selectliststr = localStorage.getItem('modellist')||'';
   // console.log('selectliststr',selectliststr);
   if (selectliststr) {
     selectlist = JSON.parse(selectliststr)
   }
 }
-// if (qyToken) {
-//   selectlist.forEach(function (item){
-//     item.value=item.value+'?qyToken='+qyToken
-//   })
-// }
 export const HttptestModule: FlowModuleTemplateType = {
   id: FlowNodeTypeEnum.httptestRequest,
   templateType: ModuleTemplateTypeEnum.externalCall,
@@ -36,32 +35,88 @@ export const HttptestModule: FlowModuleTemplateType = {
   intro: '内部服务的HTTP POST 请求，实现更为复杂的操作（联网搜索、数据库查询等）',
   showStatus: true,
   inputs: [
-    Input_Template_TFSwitch,
+    Input_Template_Switch,
     {
-      key: ModuleInputKeyEnum.httpUrl,
-      value: selectlist[0].value,
+      key: ModuleInputKeyEnum.httpMethod,
       type: FlowNodeInputTypeEnum.select,
-      valueType: ModuleDataTypeEnum.string,
-      list:selectlist,
-      label: '请求地址',
-      description: '请求目标地址',
-      placeholder: 'https://api.fastgpt.run/getInventory',
+      valueType: ModuleIOValueTypeEnum.string,
+      label: 'core.module.input.label.Http Request Method',
+      value: 'POST',
+      list: [
+        {
+          label: 'GET',
+          value: 'GET'
+        },
+        {
+          label: 'POST',
+          value: 'POST'
+        }
+      ],
       required: true,
       showTargetInApp: false,
       showTargetInPlugin: false
     },
     {
-      key: ModuleInputKeyEnum.httpHeader,
-      value: '',
-      type: FlowNodeInputTypeEnum.input,
-      valueType: ModuleDataTypeEnum.string,
-      label: '请求header',
-      description: '请求header对象',
-      placeholder: '输入请求header，例如Authorization:XXX',
+      key: ModuleInputKeyEnum.httpReqUrl,
+      type: FlowNodeInputTypeEnum.select,
+      valueType: ModuleIOValueTypeEnum.string,
+      value:selectlist[0].value,
+      list:selectlist,
+      label: 'core.module.input.label.Http Request Url',
+      description: 'core.module.input.description.Http Request Url',
+      placeholder: 'https://api.ai.com/getInventory',
       required: false,
       showTargetInApp: false,
       showTargetInPlugin: false
     },
+    {
+      key: ModuleInputKeyEnum.httpHeader,
+      type: FlowNodeInputTypeEnum.textarea,
+      valueType: ModuleIOValueTypeEnum.string,
+      label: 'core.module.input.label.Http Request Header',
+      description: 'core.module.input.description.Http Request Header',
+      placeholder: 'core.module.input.description.Http Request Header',
+      required: false,
+      showTargetInApp: false,
+      showTargetInPlugin: false
+    },
+    Input_Template_DynamicInput,
+    {
+      ...Input_Template_AddInputParam,
+      editField: {
+        key: true,
+        name: true,
+        description: true,
+        required: true,
+        dataType: true
+      },
+      defaultEditField: {
+        label: '',
+        key: '',
+        description: '',
+        inputType: FlowNodeInputTypeEnum.target,
+        valueType: ModuleIOValueTypeEnum.string,
+        required: true
+      }
+    }
   ],
-  outputs: [Output_Template_Finish]
+  outputs: [
+    Output_Template_Finish,
+    {
+      ...Output_Template_AddOutput,
+      editField: {
+        key: true,
+        name: true,
+        description: true,
+        dataType: true
+      },
+      defaultEditField: {
+        label: '',
+        key: '',
+        description: '',
+        outputType: FlowNodeOutputTypeEnum.source,
+        valueType: ModuleIOValueTypeEnum.string
+      }
+    }
+  ]
 };

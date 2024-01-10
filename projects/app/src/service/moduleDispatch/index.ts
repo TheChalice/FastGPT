@@ -1,8 +1,8 @@
-import { NextApiResponse } from 'next';
+import { NextApiResponse,NextApiRequest } from 'next';
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 import type { ChatDispatchProps, RunningModuleItemType } from '@fastgpt/global/core/module/type.d';
-import { ModuleDispatchProps } from '@fastgpt/global/core/module/type.d';
+import { ModuleDispatchProps,ModulejtDispatchProps } from '@fastgpt/global/core/module/type.d';
 import type { ChatHistoryItemResType } from '@fastgpt/global/core/chat/type.d';
 import { FlowNodeInputTypeEnum, FlowNodeTypeEnum } from '@fastgpt/global/core/module/node/constant';
 import { ModuleItemType } from '@fastgpt/global/core/module/type';
@@ -20,6 +20,7 @@ import { dispatchAnswer } from './tools/answer';
 import { dispatchClassifyQuestion } from './agent/classifyQuestion';
 import { dispatchContentExtract } from './agent/extract';
 import { dispatchHttpRequest } from './tools/http';
+import { dispatchHttptestRequest } from './tools/httptest';
 import { dispatchAppRequest } from './tools/runApp';
 import { dispatchCFR } from './tools/cfr';
 import { dispatchRunPlugin } from './plugin/run';
@@ -35,6 +36,7 @@ const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
   [FlowNodeTypeEnum.classifyQuestion]: dispatchClassifyQuestion,
   [FlowNodeTypeEnum.contentExtract]: dispatchContentExtract,
   [FlowNodeTypeEnum.httpRequest]: dispatchHttpRequest,
+  [FlowNodeTypeEnum.httptestRequest]: dispatchHttptestRequest,
   [FlowNodeTypeEnum.runApp]: dispatchAppRequest,
   [FlowNodeTypeEnum.pluginModule]: dispatchRunPlugin,
   [FlowNodeTypeEnum.pluginInput]: dispatchPluginInput,
@@ -48,18 +50,20 @@ const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
 
 /* running */
 export async function dispatchModules({
-  res,
-  modules,
-  histories = [],
-  startParams = {},
-  variables = {},
-  user,
-  stream = false,
-  detail = false,
-  ...props
-}: ChatDispatchProps & {
+                                        res,
+                                        modules,
+                                        histories = [],
+                                        startParams = {},
+                                        variables = {},
+                                        user,
+                                        stream = false,
+                                        detail = false,
+                                        req,
+                                        ...props
+                                      }: ChatDispatchProps & {
   modules: ModuleItemType[];
   startParams?: Record<string, any>;
+  req?:NextApiRequest
 }) {
   // set sse response headers
   if (stream) {
@@ -81,14 +85,14 @@ export async function dispatchModules({
   let runningTime = Date.now();
 
   function pushStore(
-    { inputs = [] }: RunningModuleItemType,
-    {
-      answerText = '',
-      responseData
-    }: {
-      answerText?: string;
-      responseData?: ChatHistoryItemResType | ChatHistoryItemResType[];
-    }
+      { inputs = [] }: RunningModuleItemType,
+      {
+        answerText = '',
+        responseData
+      }: {
+        answerText?: string;
+        responseData?: ChatHistoryItemResType | ChatHistoryItemResType[];
+      }
   ) {
     const time = Date.now();
     if (responseData) {
@@ -104,7 +108,7 @@ export async function dispatchModules({
     runningTime = time;
 
     const isResponseAnswerText =
-      inputs.find((item) => item.key === ModuleInputKeyEnum.aiChatIsResponseText)?.value ?? true;
+        inputs.find((item) => item.key === ModuleInputKeyEnum.aiChatIsResponseText)?.value ?? true;
     if (isResponseAnswerText) {
       chatAnswerText += answerText;
     }
@@ -122,8 +126,8 @@ export async function dispatchModules({
     return;
   }
   function moduleOutput(
-    module: RunningModuleItemType,
-    result: Record<string, any> = {}
+      module: RunningModuleItemType,
+      result: Record<string, any> = {}
   ): Promise<any> {
     pushStore(module, result);
 
@@ -162,12 +166,12 @@ export async function dispatchModules({
   }
   function checkModulesCanRun(modules: RunningModuleItemType[] = []) {
     return Promise.all(
-      modules.map((module) => {
-        if (!module.inputs.find((item: any) => item.value === undefined)) {
-          moduleInput(module, { [ModuleInputKeyEnum.switch]: undefined });
-          return moduleRun(module);
-        }
-      })
+        modules.map((module) => {
+          if (!module.inputs.find((item: any) => item.value === undefined)) {
+            moduleInput(module, { [ModuleInputKeyEnum.switch]: undefined });
+            return moduleRun(module);
+          }
+        })
     );
   }
   async function moduleRun(module: RunningModuleItemType): Promise<any> {
@@ -200,6 +204,21 @@ export async function dispatchModules({
 
     const dispatchRes: Record<string, any> = await (async () => {
       if (callbackMap[module.flowType]) {
+        if (module.flowType === 'httptestRequest'&&req) {
+          const propstest: ModulejtDispatchProps<Record<string, any>> = {
+            ...props,
+            res,
+            variables,
+            histories,
+            user,
+            stream,
+            detail,
+            outputs: module.outputs,
+            inputs: params,
+            req
+          };
+          return callbackMap[module.flowType](propstest);
+        }
         return callbackMap[module.flowType](dispatchData);
       }
       return {};
@@ -231,16 +250,16 @@ export async function dispatchModules({
   // });
 
   initModules.map((module) =>
-    moduleInput(module, {
-      ...startParams,
-      history: [] // abandon history field. History module will get histories from other fields.
-    })
+      moduleInput(module, {
+        ...startParams,
+        history: [] // abandon history field. History module will get histories from other fields.
+      })
   );
   await checkModulesCanRun(initModules);
 
   // focus try to run pluginOutput
   const pluginOutputModule = runningModules.find(
-    (item) => item.flowType === FlowNodeTypeEnum.pluginOutput
+      (item) => item.flowType === FlowNodeTypeEnum.pluginOutput
   );
   if (pluginOutputModule) {
     await moduleRun(pluginOutputModule);
@@ -254,65 +273,65 @@ export async function dispatchModules({
 
 /* init store modules to running modules */
 function loadModules(
-  modules: ModuleItemType[],
-  variables: Record<string, any>
+    modules: ModuleItemType[],
+    variables: Record<string, any>
 ): RunningModuleItemType[] {
   return modules
-    .filter((item) => {
-      return ![FlowNodeTypeEnum.userGuide].includes(item.moduleId as any);
-    })
-    .map((module) => {
-      return {
-        moduleId: module.moduleId,
-        name: module.name,
-        flowType: module.flowType,
-        showStatus: module.showStatus,
-        inputs: module.inputs
-          .filter(
-            (item) =>
-              item.type === FlowNodeInputTypeEnum.systemInput ||
-              item.connected ||
-              item.value !== undefined
-          ) // filter unconnected target input
-          .map((item) => {
-            if (typeof item.value !== 'string') {
-              return {
+      .filter((item) => {
+        return ![FlowNodeTypeEnum.userGuide].includes(item.moduleId as any);
+      })
+      .map((module) => {
+        return {
+          moduleId: module.moduleId,
+          name: module.name,
+          flowType: module.flowType,
+          showStatus: module.showStatus,
+          inputs: module.inputs
+              .filter(
+                  (item) =>
+                      item.type === FlowNodeInputTypeEnum.systemInput ||
+                      item.connected ||
+                      item.value !== undefined
+              ) // filter unconnected target input
+              .map((item) => {
+                if (typeof item.value !== 'string') {
+                  return {
+                    key: item.key,
+                    value: item.value
+                  };
+                }
+
+                // variables replace
+                const replacedVal = replaceVariable(item.value, variables);
+
+                return {
+                  key: item.key,
+                  value: replacedVal
+                };
+              }),
+          outputs: module.outputs
+              .map((item) => ({
                 key: item.key,
-                value: item.value
-              };
-            }
-
-            // variables replace
-            const replacedVal = replaceVariable(item.value, variables);
-
-            return {
-              key: item.key,
-              value: replacedVal
-            };
-          }),
-        outputs: module.outputs
-          .map((item) => ({
-            key: item.key,
-            answer: item.key === ModuleOutputKeyEnum.answerText,
-            value: undefined,
-            targets: item.targets
-          }))
-          .sort((a, b) => {
-            // finish output always at last
-            if (a.key === ModuleOutputKeyEnum.finish) return 1;
-            if (b.key === ModuleOutputKeyEnum.finish) return -1;
-            return 0;
-          })
-      };
-    });
+                answer: item.key === ModuleOutputKeyEnum.answerText,
+                value: undefined,
+                targets: item.targets
+              }))
+              .sort((a, b) => {
+                // finish output always at last
+                if (a.key === ModuleOutputKeyEnum.finish) return 1;
+                if (b.key === ModuleOutputKeyEnum.finish) return -1;
+                return 0;
+              })
+        };
+      });
 }
 
 /* sse response modules staus */
 export function responseStatus({
-  res,
-  status,
-  name
-}: {
+                                 res,
+                                 status,
+                                 name
+                               }: {
   res: NextApiResponse;
   status?: 'running' | 'finish';
   name?: string;
