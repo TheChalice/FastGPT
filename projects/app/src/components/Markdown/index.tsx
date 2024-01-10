@@ -208,23 +208,37 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
     .replace(/\n*(\[QUOTE SIGN\]\(.*\))/g, '$1');
 
   return (
-    <ReactMarkdown
-      className={`markdown ${styles.markdown}
+      <div>
+          {isChart && (
+              <>
+                  <ReactMarkdown
+                      components={chartRenderer}>
+                      {markdown}
+                  </ReactMarkdown>
+              </>
+          )}
+          {!isChart && (
+              <ReactMarkdown
+                  className={`markdown ${styles.markdown}
       ${isChatting ? `${formatSource ? styles.waitingAnimation : styles.animation}` : ''}
     `}
-      remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
-      rehypePlugins={[RehypeKatex]}
-      components={{
-        img: Image,
-        pre: 'div',
-        p: (pProps) => <p {...pProps} dir="auto" />,
-        code: Code,
-        a: A
-      }}
-      linkTarget={'_blank'}
-    >
-      {formatSource}
-    </ReactMarkdown>
+                  remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
+                  rehypePlugins={[RehypeKatex]}
+                  components={{
+                      img: Image,
+                      pre: 'div',
+                      p: (pProps) => <p {...pProps} dir="auto" />,
+                      code: Code,
+                      a: A
+                  }}
+                  linkTarget={'_blank'}
+              >
+                  {formatSource}
+              </ReactMarkdown>
+          )}
+      </div>
+
+
   );
 };
 

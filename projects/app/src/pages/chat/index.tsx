@@ -25,7 +25,7 @@ import { useTranslation } from 'next-i18next';
 import ChatBox, { type ComponentRef, type StartChatFnProps } from '@/components/ChatBox';
 import PageContainer from '@/components/PageContainer';
 import SideBar from '@/components/SideBar';
-import ChatHistorySlider from './components/ChatHistorySliderOld';
+import ChatHistorySlider from './components/ChatHistorySlider';
 import SliderApps from './components/SliderApps';
 import ChatHeader from './components/ChatHeader';
 import { getErrText } from '@fastgpt/global/common/error/utils';
