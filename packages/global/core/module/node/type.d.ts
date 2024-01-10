@@ -42,11 +42,12 @@ export type FlowNodeInputItemType = {
   hideInPlugin?: boolean;
 
   placeholder?: string; // input,textarea
-  list?: { label: string; value: any, qyoutput?:any, parameters?:any }[]; // select
+  list?: { label: string; value: any, qyoutput?:any, parameters?:any,parametersarr?:any }[]; // select
   markList?: { label: string; value: any }[]; // slider
   step?: number; // slider
   max?: number; // slider, number input
   min?: number; // slider, number input
+  isautoadd?: boolean; // autoadd
 };
 
 export type FlowNodeOutputTargetItemType = {
@@ -107,3 +108,8 @@ export type DatasetModuleProps = {
   [ModuleInputKeyEnum.datasetLimit]: number;
   [ModuleInputKeyEnum.datasetStartReRank]: boolean;
 };
+
+interface Parameter {
+  name: string;
+  dataType: string;
+}

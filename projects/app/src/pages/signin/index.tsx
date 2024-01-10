@@ -16,7 +16,6 @@ import { feConfigs } from '@/web/common/system/staticData';
 import CommunityModal from '@/components/CommunityModal';
 import Script from 'next/script';
 import MyTooltip from "@/components/MyTooltip";
-import MyIcon from "@/components/Icon";
 import Loading from '@/components/Loading';
 import {useLoading} from "@/web/common/hooks/useLoading";
 const RegisterForm = dynamic(() => import('./components/RegisterForm'));
@@ -84,7 +83,17 @@ const Login = () => {
               // console.log('res', JSON.stringify(res));
               let selectlist=res
               selectlist.forEach(function (item){
+
                   item.qyoutput=[{label:'data',value:'data'},{label:'data1',value:'data1'}]
+                  if (item.parameters) {
+                      item.parametersarr=[];
+                      for (const key in item.parameters) {
+                          if (item.parameters.hasOwnProperty(key)) {
+                              const value = item.parameters[key];
+                              item.parametersarr.push({dataType:key,name:value});
+                          }
+                      }
+                  }
               })
               localStorage.setItem('modellist',JSON.stringify(selectlist))
 
