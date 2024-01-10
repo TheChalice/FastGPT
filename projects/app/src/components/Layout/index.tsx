@@ -13,7 +13,7 @@ import dynamic from 'next/dynamic';
 import Auth from './auth';
 import Navbar from './navbar';
 import NavbarPhone from './navbarPhone';
-import {LANG_KEY} from "@/web/common/utils/i18n";
+//import {LANG_KEY} from "@/web/common/utils/i18n";
 const UpdateInviteModal = dynamic(
   () => import('@/components/support/user/team/UpdateInviteModal'),
   { ssr: false }
@@ -26,14 +26,16 @@ const pcUnShowLayoutRoute: Record<string, boolean> = {
   '/login/fastlogin': true,
   '/chat/share': true,
   '/app/edit': true,
-  '/chat': true
+  '/chat': true,
+  '/tools/price': true
 };
 const phoneUnShowLayoutRoute: Record<string, boolean> = {
   '/': true,
   '/login': true,
   '/login/provider': true,
   '/login/fastlogin': true,
-  '/chat/share': true
+  '/chat/share': true,
+  '/tools/price': true
 };
 
 const Layout = ({ children }: { children: JSX.Element }) => {
@@ -90,28 +92,17 @@ const Layout = ({ children }: { children: JSX.Element }) => {
 
   return (
     <>
-      <Box h={'100%'} bg={'myWhite.600'}>
+      <Box h={'100%'} bg={'myGray.100'}>
         {isPc === true && (
           <>
             {pcUnShowLayoutRoute[router.pathname] ? (
               <Auth>{children}</Auth>
             ) : (
               <>
-                {/*<Box h={'100%'} position={'fixed'} left={0} top={0} w={'70px'}>*/}
-                {/*  <Navbar unread={unread} />*/}
-                {/*</Box>*/}
-                {/*<Box h={'100%'} ml={'70px'} overflow={'overlay'}>*/}
-                {/*  <Auth>{children}</Auth>*/}
-                {/*</Box>*/}
-                {showMessage ? (
-                  <Box h={'100%'} position={'fixed'} left={0} top={0} w={'70px'}>
-                    <Navbar unread={unread} />
-                  </Box>
-                ) : (
-                  ''
-                )}
-
-                <Box h={'100%'} ml={showMessage ? '70px' : '0px'} overflow={'overlay'}>
+                <Box h={'100%'} position={'fixed'} left={0} top={0} w={'64px'}>
+                  <Navbar unread={unread} />
+                </Box>
+                <Box h={'100%'} ml={'70px'} overflow={'overlay'}>
                   <Auth>{children}</Auth>
                 </Box>
               </>
@@ -144,3 +135,57 @@ const Layout = ({ children }: { children: JSX.Element }) => {
 };
 
 export default Layout;
+
+
+// <>
+//     <Box h={'100%'} bg={'myWhite.600'}>
+//         {isPc === true && (
+//             <>
+//                 {pcUnShowLayoutRoute[router.pathname] ? (
+//                     <Auth>{children}</Auth>
+//                 ) : (
+//                     <>
+//                         {/*<Box h={'100%'} position={'fixed'} left={0} top={0} w={'70px'}>*/}
+//                         {/*  <Navbar unread={unread} />*/}
+//                         {/*</Box>*/}
+//                         {/*<Box h={'100%'} ml={'70px'} overflow={'overlay'}>*/}
+//                         {/*  <Auth>{children}</Auth>*/}
+//                         {/*</Box>*/}
+//                         {showMessage ? (
+//                             <Box h={'100%'} position={'fixed'} left={0} top={0} w={'70px'}>
+//                                 <Navbar unread={unread} />
+//                             </Box>
+//                         ) : (
+//                             ''
+//                         )}
+//
+//                         <Box h={'100%'} ml={showMessage ? '70px' : '0px'} overflow={'overlay'}>
+//                             <Auth>{children}</Auth>
+//                         </Box>
+//                     </>
+//                 )}
+//             </>
+//         )}
+//         {isPc === false && (
+//             <>
+//                 <Box h={'100%'} display={['block', 'none']}>
+//                     {phoneUnShowLayoutRoute[router.pathname] || isChatPage ? (
+//                         <Auth>{children}</Auth>
+//                     ) : (
+//                         <Flex h={'100%'} flexDirection={'column'}>
+//                             <Box flex={'1 0 0'} h={0}>
+//                                 <Auth>{children}</Auth>
+//                             </Box>
+//                             <Box h={'50px'} borderTop={'1px solid rgba(0,0,0,0.1)'}>
+//                                 <NavbarPhone unread={unread} />
+//                             </Box>
+//                         </Flex>
+//                     )}
+//                 </Box>
+//             </>
+//         )}
+//     </Box>
+//     <Loading loading={loading} zIndex={999999} />
+//     {!!userInfo && <UpdateInviteModal />}
+// </>
+//

@@ -4,8 +4,7 @@ import { Box, Flex, Image, Spinner, Textarea } from '@chakra-ui/react';
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import MyTooltip from '../MyTooltip';
-import MyIcon from '../Icon';
-import styles from './index.module.scss';
+import MyIcon from '@fastgpt/web/components/common/Icon';
 import { useRouter } from 'next/router';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
 import { compressImgFileAndUpload } from '@/web/common/file/controller';
@@ -137,7 +136,7 @@ const MessageInput = ({
                   rawFile: file,
                   type: FileTypeEnum.file,
                   name: file.name,
-                  icon: 'pdf'
+                  icon: 'file/pdf'
                 });
               }
             })
@@ -192,13 +191,13 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
         pb={['14px', '18px']}
         position={'relative'}
         boxShadow={isSpeaking ? `0 0 10px rgba(54,111,255,0.4)` : `0 0 10px rgba(0,0,0,0.2)`}
-        borderRadius={'30px'}
+        borderRadius={['none', 'md']}
         bg={'white'}
         overflow={'hidden'}
         {...(isPc
           ? {
-              border: '1px solid #3261CE',
-              // borderColor: 'rgba(0,0,0,0.12)'
+              border: '1px solid',
+              borderColor: 'rgba(0,0,0,0.12)'
             }
           : {
               borderTop: '1px solid',
@@ -216,7 +215,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
           pl={5}
           alignItems={'center'}
           bg={'white'}
-          color={'myBlue.600'}
+          color={'primary.500'}
           visibility={isSpeaking && isTransCription ? 'visible' : 'hidden'}
         >
           <Spinner size={'sm'} mr={4} />
@@ -244,7 +243,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
                   alignItems={'center'}
                   justifyContent={'center'}
                   rounded={'md'}
-                  color={'myBlue.600'}
+                  color={'primary.500'}
                   top={0}
                   left={0}
                   bottom={0}
@@ -260,7 +259,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
                 h={'16px'}
                 color={'myGray.700'}
                 cursor={'pointer'}
-                _hover={{ color: 'myBlue.600' }}
+                _hover={{ color: 'primary.500' }}
                 position={'absolute'}
                 bg={'white'}
                 right={'-8px'}
@@ -316,7 +315,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
             _focusVisible={{
               border: 'none'
             }}
-            placeholder="提问"
+            placeholder={isSpeaking ? t('core.chat.Speaking') : t('core.chat.Type a message')}
             resize={'none'}
             rows={1}
             height={'22px'}
@@ -396,7 +395,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
                       name={isSpeaking ? 'core/chat/stopSpeechFill' : 'core/chat/recordFill'}
                       width={['20px', '22px']}
                       height={['20px', '22px']}
-                      color={'myBlue.600'}
+                      color={'primary.500'}
                     />
                   </MyTooltip>
                 </Flex>
@@ -415,7 +414,7 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
                 h={['28px', '32px']}
                 w={['28px', '32px']}
                 borderRadius={'md'}
-                // bg={isSpeaking || isChatting ? '' : !havInput ? '#E5E5E5' : 'myBlue.600'}
+                bg={isSpeaking || isChatting ? '' : !havInput ? '#E5E5E5' : 'primary.500'}
                 cursor={havInput ? 'pointer' : 'not-allowed'}
                 lineHeight={1}
                 onClick={() => {
@@ -439,14 +438,12 @@ ${images.map((img) => JSON.stringify({ src: img.src })).join('\n')}
                 ) : (
                   <MyTooltip label={t('core.chat.Send Message')}>
                     <MyIcon
-                      name={'core/chat/chatSend'}
+                      name={'core/chat/sendFill'}
                       width={['18px', '20px']}
                       height={['18px', '20px']}
-                      cursor={'pointer'}
-                      color={'gray.500'}
+                      color={'white'}
                     />
                   </MyTooltip>
-
                 )}
               </Flex>
             )}

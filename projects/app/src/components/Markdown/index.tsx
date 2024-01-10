@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
-import RemarkGfm from 'remark-gfm';
-import RemarkMath from 'remark-math';
-import RehypeKatex from 'rehype-katex';
-import RemarkBreaks from 'remark-breaks';
-
 import 'katex/dist/katex.min.css';
+import RemarkMath from 'remark-math';
+import RemarkBreaks from 'remark-breaks';
+import RehypeKatex from 'rehype-katex';
+import RemarkGfm from 'remark-gfm';
+
 import styles from './index.module.scss';
 import dynamic from 'next/dynamic';
 
@@ -13,7 +13,7 @@ import { Link, Button,Box } from '@chakra-ui/react';
 import MyTooltip from '../MyTooltip';
 import { useTranslation } from 'next-i18next';
 import { EventNameEnum, eventBus } from '@/web/common/utils/eventbus';
-import MyIcon from '../Icon';
+import MyIcon from '@fastgpt/web/components/common/Icon';
 import { getFileAndOpen } from '@/web/core/dataset/utils';
 import { MARKDOWN_QUOTE_SIGN } from '@fastgpt/global/core/chat/constants';
 
@@ -75,7 +75,7 @@ function A({ children, ...props }: any) {
     return (
       <MyTooltip label={t('core.chat.markdown.Quick Question')}>
         <Button
-          variant={'base'}
+          variant={'whitePrimary'}
           size={'xs'}
           borderRadius={'md'}
           my={1}
@@ -97,10 +97,10 @@ function A({ children, ...props }: any) {
             name={'core/chat/quoteSign'}
             transform={'translateY(-2px)'}
             w={'18px'}
-            color={'myBlue.600'}
+            color={'primary.500'}
             cursor={'pointer'}
             _hover={{
-              color: 'myBlue.800'
+              color: 'primary.700'
             }}
             onClick={() => getFileAndOpen(props.href)}
           />
@@ -113,10 +113,10 @@ function A({ children, ...props }: any) {
 }
 
 const Markdown = ({ source, isChatting = false }: { source: string; isChatting?: boolean }) => {
-  // console.log('isChatting', isChatting);
-  // if (isChatting === false) {
-  //   console.log('source', source);
-  // }
+    // console.log('isChatting', isChatting);
+    // if (isChatting === false) {
+    //   console.log('source', source);
+    // }
 //   const markdown = `
 // # 示例
 // 这是一个折线图的例子：
@@ -173,7 +173,7 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 // ]
 // \`\`\`
 // `;
-  const markdown = `
+    const markdown = `
 # 示例
 这是一个折线图的例子：
 \`\`\`piechart
@@ -201,52 +201,57 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 ]
 \`\`\`
 `;
-  const isChart=false;
-  const components = useMemo(
-    () => ({
-      img: Image,
-      pre: 'div',
-      p: 'div',
-      code: Code,
-      a: A
-    }),
-    []
-  );
-
+    const isChart=false;
   const formatSource = source
     .replace(/\\n/g, '\n&nbsp;')
     .replace(/(http[s]?:\/\/[^\s，。]+)([。，])/g, '$1 $2')
     .replace(/\n*(\[QUOTE SIGN\]\(.*\))/g, '$1');
 
   return (
-      <div>
-          {isChart && (
-              <>
-                  <ReactMarkdown
-                      components={chartRenderer}>
-                      {markdown}
-                  </ReactMarkdown>
-              </>
-          )}
-          {!isChart && (
-              <>
-                  <ReactMarkdown
-                      className={`markdown ${styles.markdown}
+    <ReactMarkdown
+      className={`markdown ${styles.markdown}
       ${isChatting ? `${formatSource ? styles.waitingAnimation : styles.animation}` : ''}
     `}
-                      remarkPlugins={[RemarkGfm, RemarkMath, RemarkBreaks]}
-                      rehypePlugins={[RehypeKatex]}
-                      // @ts-ignore
-                      components={components}
-                      linkTarget={'_blank'}
-                  >
-                      {formatSource}
-                  </ReactMarkdown>
-              </>
-          )}
-      </div>
-
+      remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
+      rehypePlugins={[RehypeKatex]}
+      components={{
+        img: Image,
+        pre: 'div',
+        p: (pProps) => <p {...pProps} dir="auto" />,
+        code: Code,
+        a: A
+      }}
+      linkTarget={'_blank'}
+    >
+      {formatSource}
+    </ReactMarkdown>
   );
 };
 
 export default React.memo(Markdown);
+// <div>
+//     {isChart && (
+//         <>
+//             <ReactMarkdown
+//                 components={chartRenderer}>
+//                 {markdown}
+//             </ReactMarkdown>
+//         </>
+//     )}
+//     {!isChart && (
+//         <>
+//             <ReactMarkdown
+//                 className={`markdown ${styles.markdown}
+//       ${isChatting ? `${formatSource ? styles.waitingAnimation : styles.animation}` : ''}
+//     `}
+//                 remarkPlugins={[RemarkGfm, RemarkMath, RemarkBreaks]}
+//                 rehypePlugins={[RehypeKatex]}
+//                 // @ts-ignore
+//                 components={components}
+//                 linkTarget={'_blank'}
+//             >
+//                 {formatSource}
+//             </ReactMarkdown>
+//         </>
+//     )}
+// </div>

@@ -1,11 +1,11 @@
 import { startQueue } from './utils/tools';
 import { PRICE_SCALE } from '@fastgpt/global/support/wallet/bill/constants';
-import { initPg } from '@fastgpt/service/common/pg';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { connectMongo } from '@fastgpt/service/common/mongo/init';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 import { createDefaultTeam } from '@fastgpt/service/support/user/team/controller';
 import { exit } from 'process';
+import { initVectorStore } from '@fastgpt/service/common/vectorStore/controller';
 import http from "http";
 import axios from 'axios';
 import qs from "querystring";
@@ -19,7 +19,7 @@ export function connectToDatabase(): Promise<void> {
   return connectMongo({
     beforeHook: () => {},
     afterHook: () => {
-      initPg();
+      initVectorStore();
       // start queue
       startQueue();
       return initRootUser();
@@ -32,8 +32,8 @@ async function initRootUser() {
     const rootUser = await MongoUser.findOne({
       username: 'root'
     });
-    const psw = process.env.DEFAULT_ROOT_PSW || '1qaz!QAZ';
-    // console.log('psw', psw);
+    const psw = process.env.DEFAULT_ROOT_PSW || '123456';
+
     let rootId = rootUser?._id || '';
 
     // init root user
