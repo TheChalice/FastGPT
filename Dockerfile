@@ -9,9 +9,11 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
 
 RUN apk add --no-cache libc6-compat
 
-RUN pnpm config set registry https://registry.yarnpkg.com
-
 RUN npm install -g pnpm@8.6.0
+
+
+
+
 
 
 # copy packages and one project
