@@ -16,7 +16,7 @@ COPY ./projects/$name/package.json ./projects/$name/package.json
 
 RUN [ -f pnpm-lock.yaml ] || (echo "Lockfile not found." && exit 1)
 
-RUN pnpm config set registry https://registry.yarnpkg.com
+RUN pnpm config set registry https://registry.npmmirror.com
 
 RUN pnpm install
 
