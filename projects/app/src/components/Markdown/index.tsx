@@ -27,13 +27,19 @@ const ChatGuide = dynamic(() => import('./chat/Guide'));
 const QuestionGuide = dynamic(() => import('./chat/QuestionGuide'));
 const ImageBlock = dynamic(() => import('./chat/Image'));
 
+const LineChartComponent = dynamic(() => import('./LineChartComponent'));
+const PieChartComponent = dynamic(() => import('./PieChartComponent'));
+const BarChartComponent = dynamic(() => import('./BarChartComponent'));
 export enum CodeClassName {
   guide = 'guide',
   questionGuide = 'questionGuide',
   mermaid = 'mermaid',
   echarts = 'echarts',
   quote = 'quote',
-  img = 'img'
+  img = 'img',
+  piechart = 'piechart',
+  barchart = 'barchart',
+  linechart = 'linechart'
 }
 
 function Code({ inline, className, children }: any) {
@@ -43,7 +49,18 @@ function Code({ inline, className, children }: any) {
   if (codeType === CodeClassName.mermaid) {
     return <MermaidCodeBlock code={String(children)} />;
   }
-
+  if (codeType === CodeClassName.linechart) {
+    const chartData = JSON.parse(children)
+    return <LineChartComponent code={chartData} />;;
+  }
+  if (codeType === CodeClassName.piechart) {
+    const chartData = JSON.parse(children)
+    return <PieChartComponent code={chartData} />;;
+  }
+  if (codeType === CodeClassName.barchart) {
+    const chartData = JSON.parse(children)
+    return <BarChartComponent code={chartData} />;;
+  }
   if (codeType === CodeClassName.guide) {
     return <ChatGuide text={String(children)} />;
   }
@@ -113,66 +130,7 @@ function A({ children, ...props }: any) {
 }
 
 const Markdown = ({ source, isChatting = false }: { source: string; isChatting?: boolean }) => {
-    // console.log('isChatting', isChatting);
-    // if (isChatting === false) {
-    //   console.log('source', source);
-    // }
-//   const markdown = `
-// # 示例
-// 这是一个折线图的例子：
-// \`\`\`linechart
-// [
-//  {
-//     "name": "Page A",
-//     "uv": 4000,
-//     "pv": 2400
-//   },
-//   {
-//     "name": "Page B",
-//     "uv": 3000,
-//     "pv": 1398
-//   },
-//   {
-//     "name": "Page C",
-//     "uv": 2000,
-//     "pv": 9800
-//   },
-//   {
-//     "name": "Page D",
-//     "uv": 2780,
-//     "pv": 3908
-//   }
-// ]
-// \`\`\`
-// `;
-//   const markdown = `
-// # 示例
-// 这是一个折线图的例子：
-// \`\`\`barchart
-// [
-//  {
-//     "name": "Page A",
-//     "uv": 4000,
-//     "pv": 2400
-//   },
-//   {
-//     "name": "Page B",
-//     "uv": 3000,
-//     "pv": 1398
-//   },
-//   {
-//     "name": "Page C",
-//     "uv": 2000,
-//     "pv": 9800
-//   },
-//   {
-//     "name": "Page D",
-//     "uv": 2780,
-//     "pv": 3908
-//   }
-// ]
-// \`\`\`
-// `;
+
     const markdown = `
 # 示例
 这是一个折线图的例子：
@@ -201,7 +159,6 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 ]
 \`\`\`
 `;
-    const isChart=false;
   const formatSource = source
     .replace(/\\n/g, '\n&nbsp;')
     .replace(/(http[s]?:\/\/[^\s，。]+)([。，])/g, '$1 $2')
@@ -209,16 +166,7 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
 
   return (
       <div>
-          {isChart && (
-              <>
-                  <ReactMarkdown
-                      components={chartRenderer}>
-                      {markdown}
-                  </ReactMarkdown>
-              </>
-          )}
-          {!isChart && (
-              <ReactMarkdown
+        <ReactMarkdown
                   className={`markdown ${styles.markdown}
       ${isChatting ? `${formatSource ? styles.waitingAnimation : styles.animation}` : ''}
     `}
@@ -235,7 +183,7 @@ const Markdown = ({ source, isChatting = false }: { source: string; isChatting?:
               >
                   {formatSource}
               </ReactMarkdown>
-          )}
+
       </div>
 
 
