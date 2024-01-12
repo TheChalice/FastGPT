@@ -86,16 +86,16 @@ const ChunkImport = () => {
         </Flex>
         {/* price */}
         <Flex py={4} alignItems={'center'}>
-          <Box>
-            预估价格
-            <MyTooltip
-              label={`索引生成计费为: ${formatPrice(unitPrice, 1000)}/1k tokens`}
-              forceShow
-            >
-              <QuestionOutlineIcon ml={1} />
-            </MyTooltip>
-          </Box>
-          <Box ml={4}>{price}元</Box>
+          {/*<Box>*/}
+          {/*  预估价格*/}
+          {/*  <MyTooltip*/}
+          {/*    label={`索引生成计费为: ${formatPrice(unitPrice, 1000)}/1k tokens`}*/}
+          {/*    forceShow*/}
+          {/*  >*/}
+          {/*    <QuestionOutlineIcon ml={1} />*/}
+          {/*  </MyTooltip>*/}
+          {/*</Box>*/}
+          {/*<Box ml={4}>{price}元</Box>*/}
         </Flex>
         <Flex mt={3}>
           {showRePreview && (
