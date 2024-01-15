@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let username=await authQianyu(token)
     console.log('username', username);
     if (!username) {
-      throw new Error('取不出用户');
+      throw new Error('登录超时，请重新登录');
     }
     // 检测用户是否存在
     const user = await MongoUser.findOne({
