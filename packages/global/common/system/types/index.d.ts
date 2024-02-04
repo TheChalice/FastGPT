@@ -1,3 +1,4 @@
+import { StandSubPlanLevelMapType, SubPlanType } from '../../../support/wallet/sub/type';
 import type {
   ChatModelItemType,
   FunctionModelItemType,
@@ -7,16 +8,14 @@ import type {
   WhisperModelType,
   ReRankModelItemType
 } from '../../../core/ai/model.d';
+import { SubTypeEnum } from '../../../support/wallet/sub/constants';
 
 /* fastgpt main */
 export type FastGPTConfigFileType = {
   feConfigs: FastGPTFeConfigsType;
   systemEnv: SystemEnvType;
-  chatModels: ChatModelItemType[];
-  qaModels: LLMModelItemType[];
-  cqModels: FunctionModelItemType[];
-  extractModels: FunctionModelItemType[];
-  qgModels: LLMModelItemType[];
+  subPlans?: SubPlanType;
+  llmModels: ChatModelItemType[];
   vectorModels: VectorModelItemType[];
   reRankModels: ReRankModelItemType[];
   audioSpeechModels: AudioSpeechModelType[];
@@ -51,6 +50,8 @@ export type FastGPTFeConfigsType = {
   favicon?: string;
   customApiDomain?: string;
   customSharePageDomain?: string;
+
+  uploadFileMaxSize?: number;
 };
 
 export type SystemEnvType = {
@@ -60,7 +61,8 @@ export type SystemEnvType = {
   pgHNSWEfSearch: number;
 };
 
-declare global {
-  var feConfigs: FastGPTFeConfigsType;
-  var systemEnv: SystemEnvType;
-}
+// declare global {
+//   var feConfigs: FastGPTFeConfigsType;
+//   var systemEnv: SystemEnvType;
+//   var systemInitd: boolean;
+// }

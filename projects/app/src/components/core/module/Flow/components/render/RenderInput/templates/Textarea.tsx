@@ -1,21 +1,44 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useTransition } from 'react';
 import type { RenderInputProps } from '../type';
-import { onChangeNode } from '../../../../FlowProvider';
+import { useFlowProviderStore, onChangeNode } from '../../../../FlowProvider';
 import { useTranslation } from 'next-i18next';
-import PromptTextarea from '@/components/common/Textarea/PromptTextarea';
+import PromptEditor from '@fastgpt/web/components/common/Textarea/PromptEditor';
+import {
+  formatEditorVariablePickerIcon,
+  getGuideModule,
+  splitGuideModule
+} from '@fastgpt/global/core/module/utils';
 
-const TextareaRender = ({ item, moduleId }: RenderInputProps) => {
+const TextareaRender = ({ inputs = [], item, moduleId }: RenderInputProps) => {
   const { t } = useTranslation();
+  const { nodes } = useFlowProviderStore();
 
-  const update = useCallback(
-    (value: string) => {
+  // get variable
+  const variables = useMemo(() => {
+    const globalVariables = formatEditorVariablePickerIcon(
+      splitGuideModule(getGuideModule(nodes.map((node) => node.data)))?.variableModules || []
+    );
+    const moduleVariables = formatEditorVariablePickerIcon(
+      inputs
+        .filter((input) => input.edit)
+        .map((item) => ({
+          key: item.key,
+          label: item.label
+        }))
+    );
+
+    return [...globalVariables, ...moduleVariables];
+  }, [inputs, nodes]);
+
+  const onChange = useCallback(
+    (e: string) => {
       onChangeNode({
         moduleId,
         type: 'updateInput',
         key: item.key,
         value: {
           ...item,
-          value
+          value: e
         }
       });
     },
@@ -23,16 +46,13 @@ const TextareaRender = ({ item, moduleId }: RenderInputProps) => {
   );
 
   return (
-    <PromptTextarea
+    <PromptEditor
+      variables={variables}
       title={t(item.label)}
-      rows={5}
-      bg={'myWhite.400'}
+      h={150}
       placeholder={t(item.placeholder || '')}
-      resize={'both'}
-      defaultValue={item.value}
-      onBlur={(e) => {
-        update(e.target.value);
-      }}
+      value={item.value}
+      onChange={onChange}
     />
   );
 };

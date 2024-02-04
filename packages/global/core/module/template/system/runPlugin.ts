@@ -6,9 +6,9 @@ export const RunPluginModule: FlowModuleTemplateType = {
   id: FlowNodeTypeEnum.pluginModule,
   templateType: ModuleTemplateTypeEnum.externalCall,
   flowType: FlowNodeTypeEnum.pluginModule,
-  avatar: '/imgs/module/custom.png',
+  avatar: '',
   intro: '',
-  name: '自定义模块',
+  name: '',
   showStatus: false,
   inputs: [], // [{key:'pluginId'},...]
   outputs: []

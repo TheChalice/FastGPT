@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -8,21 +8,21 @@ import {
   Divider,
   Select,
   Input,
-  Link
+  Link,
+  Progress
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { UserUpdateParams } from '@/types/user';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import type { UserType } from '@fastgpt/global/support/user/type.d';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
 import { compressImgFileAndUpload } from '@/web/common/file/controller';
-import { feConfigs, systemVersion } from '@/web/common/system/staticData';
+import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useTranslation } from 'next-i18next';
 import { timezoneList } from '@fastgpt/global/common/time/timezone';
-import Loading from '@/components/Loading';
 import Avatar from '@/components/Avatar';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import MyTooltip from '@/components/MyTooltip';
@@ -32,24 +32,19 @@ import MySelect from '@/components/Select';
 import { formatStorePrice2Read } from '@fastgpt/global/support/wallet/bill/tools';
 import { putUpdateMemberName } from '@/web/support/user/team/api';
 import { getDocPath } from '@/web/common/system/doc';
+import { getTeamDatasetValidSub } from '@/web/support/wallet/sub/api';
+import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
 
 const TeamMenu = dynamic(() => import('@/components/support/user/team/TeamMenu'));
-const PayModal = dynamic(() => import('./PayModal'), {
-  loading: () => <Loading fixed={false} />,
-  ssr: false
-});
-const UpdatePswModal = dynamic(() => import('./UpdatePswModal'), {
-  loading: () => <Loading fixed={false} />,
-  ssr: false
-});
-const OpenAIAccountModal = dynamic(() => import('./OpenAIAccountModal'), {
-  loading: () => <Loading fixed={false} />,
-  ssr: false
-});
+const PayModal = dynamic(() => import('./PayModal'));
+const UpdatePswModal = dynamic(() => import('./UpdatePswModal'));
+const OpenAIAccountModal = dynamic(() => import('./OpenAIAccountModal'));
+const SubDatasetModal = dynamic(() => import('@/components/support/wallet/SubDatasetModal'));
 
 const UserInfo = () => {
   const theme = useTheme();
   const router = useRouter();
+  const { feConfigs, systemVersion } = useSystemStore();
   const { t, i18n } = useTranslation();
   const { userInfo, updateUserInfo, initUserInfo } = useUserStore();
   const timezones = useRef(timezoneList());
@@ -69,6 +64,11 @@ const UserInfo = () => {
     onOpen: onOpenUpdatePsw
   } = useDisclosure();
   const { isOpen: isOpenOpenai, onClose: onCloseOpenai, onOpen: onOpenOpenai } = useDisclosure();
+  const {
+    isOpen: isOpenSubDatasetModal,
+    onClose: onCloseSubDatasetModal,
+    onOpen: onOpenSubDatasetModal
+  } = useDisclosure();
 
   const { File, onOpen: onOpenSelectFile } = useSelectFile({
     fileType: '.jpg,.png',
@@ -97,6 +97,7 @@ const UserInfo = () => {
       if (!file || !userInfo) return;
       try {
         const src = await compressImgFileAndUpload({
+          type: MongoImageTypeEnum.userAvatar,
           file,
           maxW: 300,
           maxH: 300
@@ -108,12 +109,12 @@ const UserInfo = () => {
         });
       } catch (err: any) {
         toast({
-          title: typeof err === 'string' ? err : '头像选择异常',
+          title: typeof err === 'string' ? err : t('common.error.Select avatar failed'),
           status: 'warning'
         });
       }
     },
-    [onclickSave, toast, userInfo]
+    [onclickSave, t, toast, userInfo]
   );
 
   useQuery(['init'], initUserInfo, {
@@ -121,6 +122,26 @@ const UserInfo = () => {
       reset(res);
     }
   });
+
+  const {
+    data: teamSubPlan = { totalPoints: 0, usedPoints: 0, datasetMaxSize: 800, usedDatasetSize: 0 }
+  } = useQuery(['getTeamDatasetValidSub'], getTeamDatasetValidSub);
+  const datasetUsageMap = useMemo(() => {
+    const rate = teamSubPlan.usedDatasetSize / teamSubPlan.datasetMaxSize;
+
+    const colorScheme = (() => {
+      if (rate < 0.5) return 'green';
+      if (rate < 0.8) return 'yellow';
+      return 'red';
+    })();
+
+    return {
+      colorScheme,
+      value: rate * 100,
+      maxSize: teamSubPlan.datasetMaxSize || t('common.Unlimited'),
+      usedSize: teamSubPlan.usedDatasetSize
+    };
+  }, [teamSubPlan.usedDatasetSize, teamSubPlan.datasetMaxSize, t]);
 
   return (
     <Box
@@ -233,21 +254,52 @@ const UserInfo = () => {
             {t('user.Change')}
           </Button>
         </Flex>
-        <Box mt={6} whiteSpace={'nowrap'} w={['85%', '300px']}>
-          <Flex alignItems={'center'}>
-            <Box flex={'0 0 80px'} fontSize={'md'}>
-              {t('user.team.Balance')}:&nbsp;
+        {feConfigs.isPlus && (
+          <>
+            <Box mt={6} whiteSpace={'nowrap'} w={['85%', '300px']}>
+              <Flex alignItems={'center'}>
+                <Box flex={'0 0 80px'} fontSize={'md'}>
+                  {t('user.team.Balance')}:&nbsp;
+                </Box>
+                <Box flex={1}>
+                  <strong>{formatStorePrice2Read(userInfo?.team?.balance).toFixed(3)}</strong> 元
+                </Box>
+                {feConfigs?.show_pay && userInfo?.team?.canWrite && (
+                  <Button size={['sm', 'md']} ml={5} onClick={onOpenPayModal}>
+                    {t('user.Pay')}
+                  </Button>
+                )}
+              </Flex>
             </Box>
-            <Box flex={1}>
-              <strong>{formatStorePrice2Read(userInfo?.team?.balance).toFixed(3)}</strong> 元
-            </Box>
-            {feConfigs?.show_pay && userInfo?.team?.canWrite && (
-              <Button size={['sm', 'md']} ml={5} onClick={onOpenPayModal}>
-                {t('user.Pay')}
-              </Button>
+            {feConfigs?.show_pay && (
+              <Box mt={6} whiteSpace={'nowrap'} w={['85%', '300px']}>
+                <Flex alignItems={'center'}>
+                  <Box flex={'1 0 0'} fontSize={'md'}>
+                    {t('support.user.team.Dataset usage')}:&nbsp;{datasetUsageMap.usedSize}/
+                    {datasetUsageMap.maxSize}
+                  </Box>
+                  {userInfo?.team?.canWrite && (
+                    <Button size={'sm'} onClick={onOpenSubDatasetModal}>
+                      {t('support.wallet.Buy more')}
+                    </Button>
+                  )}
+                </Flex>
+                <Box mt={1}>
+                  <Progress
+                    value={datasetUsageMap.value}
+                    colorScheme={datasetUsageMap.colorScheme}
+                    borderRadius={'md'}
+                    isAnimated
+                    hasStripe
+                    borderWidth={'1px'}
+                    borderColor={'borderColor.base'}
+                  />
+                </Box>
+              </Box>
             )}
-          </Flex>
-        </Box>
+          </>
+        )}
+
         {feConfigs?.docUrl && (
           <Link
             href={getDocPath('/docs/intro')}
@@ -264,7 +316,7 @@ const UserInfo = () => {
             userSelect={'none'}
             textDecoration={'none !important'}
           >
-            <MyIcon name={'common/courseLight'} w={'18px'} />
+            <MyIcon name={'common/courseLight'} w={'18px'} color={'myGray.600'} />
             <Box ml={2} flex={1}>
               {t('system.Help Document')}
             </Box>
@@ -314,7 +366,7 @@ const UserInfo = () => {
                 userSelect={'none'}
                 onClick={onOpenOpenai}
               >
-                <Avatar src={'/imgs/openai.png'} w={'18px'} />
+                <MyIcon name={'common/openai'} w={'18px'} color={'myGray.600'} />
                 <Box ml={2} flex={1}>
                   OpenAI/OneAPI 账号
                 </Box>
@@ -344,9 +396,10 @@ const UserInfo = () => {
           onClose={onCloseOpenai}
         />
       )}
+      {isOpenSubDatasetModal && <SubDatasetModal onClose={onCloseSubDatasetModal} />}
       <File onSelect={onSelectFile} />
     </Box>
   );
 };
 
-export default UserInfo;
+export default React.memo(UserInfo);

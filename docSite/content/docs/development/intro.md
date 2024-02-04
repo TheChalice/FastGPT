@@ -48,6 +48,8 @@ git clone git@github.com:<github_username>/FastGPT.git
 
 第一次开发，需要先部署数据库，建议本地开发可以随便找一台 2C2G 的轻量小数据库实践。数据库部署教程：[Docker 快速部署](/docs/development/docker/)。部署完了，可以本地访问其数据库。
 
+Mongo 数据库需要修改副本集的`host`，从原来的`mongo:27017`修改为`ip:27017`。
+
 ### 4. 初始配置
 
 以下文件均在 `projects/app` 路径下。
@@ -62,7 +64,7 @@ git clone git@github.com:<github_username>/FastGPT.git
 
 **注意：json 配置文件不能包含注释，介绍中为了方便看才加入的注释**
 
-这个文件大部分时候不需要修改。只需要关注 SystemParams 里的参数：
+这个文件大部分时候不需要修改。只需要关注 `systemEnv` 里的参数：
 
 - `vectorMaxProcess`: 向量生成最大进程，根据数据库和 key 的并发数来决定，通常单个 120 号，2c4g 服务器设置 10~15。
 - `qaMaxProcess`: QA 生成最大进程

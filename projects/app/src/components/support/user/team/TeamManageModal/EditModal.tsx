@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
 import { compressImgFileAndUpload } from '@/web/common/file/controller';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import { getErrText } from '@fastgpt/global/common/error/utils';
 import { useRequest } from '@/web/common/hooks/useRequest';
 import MyModal from '@/components/MyModal';
@@ -12,6 +12,7 @@ import MyTooltip from '@/components/MyTooltip';
 import Avatar from '@/components/Avatar';
 import { postCreateTeam, putUpdateTeam } from '@/web/support/user/team/api';
 import { CreateTeamProps } from '@fastgpt/global/support/user/team/controller.d';
+import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
 
 export type FormDataType = CreateTeamProps & {
   id?: string;
@@ -50,6 +51,7 @@ function EditModal({
       if (!file) return;
       try {
         const src = await compressImgFileAndUpload({
+          type: MongoImageTypeEnum.teamAvatar,
           file,
           maxW: 300,
           maxH: 300

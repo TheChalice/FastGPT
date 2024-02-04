@@ -7,13 +7,28 @@ export enum BillSourceEnum {
   api = 'api',
   shareLink = 'shareLink',
   training = 'training',
-  datasetStore = 'datasetStore'
+
+  standSubPlan = 'standSubPlan',
+  extraDatasetSub = 'extraDatasetSub'
 }
 
-export const BillSourceMap: Record<`${BillSourceEnum}`, string> = {
-  [BillSourceEnum.fastgpt]: '在线使用',
-  [BillSourceEnum.api]: 'Api',
-  [BillSourceEnum.shareLink]: '免登录链接',
-  [BillSourceEnum.training]: '数据训练',
-  [BillSourceEnum.datasetStore]: '知识库存储'
+export const BillSourceMap = {
+  [BillSourceEnum.fastgpt]: {
+    label: '在线使用'
+  },
+  [BillSourceEnum.api]: {
+    label: 'Api'
+  },
+  [BillSourceEnum.shareLink]: {
+    label: '免登录链接'
+  },
+  [BillSourceEnum.training]: {
+    label: 'dataset.Training Name'
+  },
+  [BillSourceEnum.standSubPlan]: {
+    label: 'support.wallet.subscription.type.standard'
+  },
+  [BillSourceEnum.extraDatasetSub]: {
+    label: 'support.wallet.subscription.type.extraDatasetSize'
+  }
 };

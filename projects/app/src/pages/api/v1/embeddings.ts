@@ -5,12 +5,15 @@ import { withNextCors } from '@fastgpt/service/common/middle/cors';
 import { pushGenerateVectorBill } from '@/service/support/wallet/bill/push';
 import { connectToDatabase } from '@/service/mongo';
 import { authTeamBalance } from '@/service/support/permission/auth/bill';
-import { getVectorsByText, GetVectorProps } from '@fastgpt/service/core/ai/embedding';
+import { getVectorsByText } from '@fastgpt/service/core/ai/embedding';
 import { updateApiKeyUsage } from '@fastgpt/service/support/openapi/tools';
 import { getBillSourceByAuthType } from '@fastgpt/global/support/wallet/bill/tools';
+import { getVectorModel } from '@/service/core/ai/model';
 
-type Props = GetVectorProps & {
+type Props = {
   input: string | string[];
+  model: string;
+  dimensions?: number;
   billId?: string;
 };
 
@@ -33,28 +36,29 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
 
     await authTeamBalance(teamId);
 
-    const { tokens, vectors } = await getVectorsByText({ input: query, model });
+    const { charsLength, vectors } = await getVectorsByText({
+      input: query,
+      model: getVectorModel(model)
+    });
 
-    jsonRes(res, {
-      data: {
-        object: 'list',
-        data: vectors.map((item, index) => ({
-          object: 'embedding',
-          index: index,
-          embedding: item
-        })),
-        model,
-        usage: {
-          prompt_tokens: tokens,
-          total_tokens: tokens
-        }
+    res.json({
+      object: 'list',
+      data: vectors.map((item, index) => ({
+        object: 'embedding',
+        index: index,
+        embedding: item
+      })),
+      model,
+      usage: {
+        prompt_tokens: charsLength,
+        total_tokens: charsLength
       }
     });
 
     const { total } = pushGenerateVectorBill({
       teamId,
       tmbId,
-      tokens,
+      charsLength,
       model,
       billId,
       source: getBillSourceByAuthType({ authType })

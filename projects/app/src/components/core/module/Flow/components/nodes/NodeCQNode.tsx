@@ -17,12 +17,12 @@ import SourceHandle from '../render/SourceHandle';
 import MyTooltip from '@/components/MyTooltip';
 import { onChangeNode } from '../../FlowProvider';
 
-const NodeCQNode = React.memo(function NodeCQNode({ data }: { data: FlowModuleItemType }) {
+const NodeCQNode = ({ data, selected }: NodeProps<FlowModuleItemType>) => {
   const { t } = useTranslation();
   const { moduleId, inputs } = data;
 
   return (
-    <NodeCard minW={'400px'} {...data}>
+    <NodeCard minW={'400px'} selected={selected} {...data}>
       <Divider text="Input" />
       <Container>
         <RenderInput
@@ -126,7 +126,7 @@ const NodeCQNode = React.memo(function NodeCQNode({ data }: { data: FlowModuleIt
                       });
                     }}
                   >
-                    添加问题类型
+                    {t('core.module.Add question type')}
                   </Button>
                 </Box>
               );
@@ -136,7 +136,5 @@ const NodeCQNode = React.memo(function NodeCQNode({ data }: { data: FlowModuleIt
       </Container>
     </NodeCard>
   );
-});
-export default function Node({ data }: NodeProps<FlowModuleItemType>) {
-  return <NodeCQNode data={data} />;
-}
+};
+export default React.memo(NodeCQNode);

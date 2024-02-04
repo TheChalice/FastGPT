@@ -4,7 +4,7 @@ import { ModuleOutputKeyEnum, ModuleInputKeyEnum } from '../module/constants';
 import type { FlowNodeInputItemType } from '../module/node/type.d';
 import { getGuideModule, splitGuideModule } from '../module/utils';
 import { ModuleItemType } from '../module/type.d';
-import { DatasetSearchModeEnum } from '../dataset/constant';
+import { DatasetSearchModeEnum } from '../dataset/constants';
 
 export const getDefaultAppForm = (templateId = 'fastgpt-universal'): AppSimpleEditFormType => {
   return {
@@ -91,7 +91,7 @@ export const appModules2Form = ({
       );
       defaultAppForm.dataset.limit = findInputValueByKey(
         module.inputs,
-        ModuleInputKeyEnum.datasetLimit
+        ModuleInputKeyEnum.datasetMaxTokens
       );
       defaultAppForm.dataset.searchMode =
         findInputValueByKey(module.inputs, ModuleInputKeyEnum.datasetSearchMode) ||

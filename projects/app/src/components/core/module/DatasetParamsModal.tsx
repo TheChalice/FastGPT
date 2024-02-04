@@ -15,12 +15,12 @@ import { QuestionOutlineIcon } from '@chakra-ui/icons';
 import MySlider from '@/components/Slider';
 import MyTooltip from '@/components/MyTooltip';
 import MyModal from '@/components/MyModal';
-import { DatasetSearchModeEnum } from '@fastgpt/global/core/dataset/constant';
+import { DatasetSearchModeEnum } from '@fastgpt/global/core/dataset/constants';
 import { useTranslation } from 'next-i18next';
-import { reRankModelList } from '@/web/common/system/staticData';
+import { useSystemStore } from '@/web/common/system/useSystemStore';
 
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
-import { DatasetSearchModeMap } from '@fastgpt/global/core/dataset/constant';
+import { DatasetSearchModeMap } from '@fastgpt/global/core/dataset/constants';
 import MyRadio from '@/components/common/MyRadio';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 
@@ -45,6 +45,7 @@ const DatasetParamsModal = ({
 }: DatasetParamsProps & { onClose: () => void; onSuccess: (e: DatasetParamsProps) => void }) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { reRankModelList } = useSystemStore();
   const [refresh, setRefresh] = useState(false);
   const { register, setValue, getValues, handleSubmit } = useForm<DatasetParamsProps>({
     defaultValues: {
@@ -72,7 +73,7 @@ const DatasetParamsModal = ({
       return false;
 
     return true;
-  }, [getValues, similarity, refresh]);
+  }, [getValues, similarity]);
 
   return (
     <MyModal
@@ -135,8 +136,8 @@ const DatasetParamsModal = ({
         )}
 
         {limit !== undefined && (
-          <Box display={['block', 'flex']} py={8} mt={3}>
-            <Box flex={'0 0 100px'} mb={[8, 0]}>
+          <Box display={['block', 'flex']} mt={5}>
+            <Box flex={'0 0 120px'} mb={[8, 0]}>
               {t('core.dataset.search.Max Tokens')}
               <MyTooltip label={t('core.dataset.search.Max Tokens Tips')} forceShow>
                 <QuestionOutlineIcon ml={1} />
@@ -151,9 +152,9 @@ const DatasetParamsModal = ({
                 min={100}
                 max={maxTokens}
                 step={50}
-                value={getValues(ModuleInputKeyEnum.datasetLimit) ?? 1000}
+                value={getValues(ModuleInputKeyEnum.datasetMaxTokens) ?? 1000}
                 onChange={(val) => {
-                  setValue(ModuleInputKeyEnum.datasetLimit, val);
+                  setValue(ModuleInputKeyEnum.datasetMaxTokens, val);
                   setRefresh(!refresh);
                 }}
               />
@@ -161,8 +162,8 @@ const DatasetParamsModal = ({
           </Box>
         )}
         {showSimilarity && (
-          <Box display={['block', 'flex']} py={8}>
-            <Box flex={'0 0 100px'} mb={[8, 0]}>
+          <Box display={['block', 'flex']} mt={5}>
+            <Box flex={'0 0 120px'} mb={[8, 0]}>
               {t('core.dataset.search.Min Similarity')}
               <MyTooltip label={t('core.dataset.search.Min Similarity Tips')} forceShow>
                 <QuestionOutlineIcon ml={1} />
@@ -189,7 +190,7 @@ const DatasetParamsModal = ({
 
         {searchEmptyText !== undefined && (
           <Box display={['block', 'flex']} pt={3}>
-            <Box flex={'0 0 100px'} mb={[2, 0]}>
+            <Box flex={'0 0 120px'} mb={[2, 0]}>
               {t('core.dataset.search.Empty result response')}
             </Box>
             <Box flex={1}>

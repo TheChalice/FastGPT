@@ -9,7 +9,7 @@ import {
   TagLabel,
   useTheme
 } from '@chakra-ui/react';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useTranslation } from 'next-i18next';
 
 type Props = BoxProps & { defaultValues: string[]; onUpdate: (e: string[]) => void };
@@ -79,6 +79,8 @@ const TagTextarea = ({ defaultValues, onUpdate, ...props }: Props) => {
           ref={InputRef}
           variant={'unstyled'}
           display={'inline-block'}
+          h={'24px'}
+          borderRadius={'none'}
           w="auto"
           onBlur={(e) => {
             const value = e.target.value;

@@ -1,5 +1,5 @@
 import { TeamItemType, TeamMemberWithTeamSchema } from '@fastgpt/global/support/user/team/type';
-import { Types } from '../../../common/mongo';
+import { ClientSession, Types } from '../../../common/mongo';
 import {
   TeamMemberRoleEnum,
   TeamMemberStatusEnum,
@@ -8,7 +8,7 @@ import {
 import { MongoTeamMember } from './teamMemberSchema';
 import { MongoTeam } from './teamSchema';
 
-async function getTeam(match: Record<string, any>): Promise<TeamItemType> {
+async function getTeamMember(match: Record<string, any>): Promise<TeamItemType> {
   const tmb = (await MongoTeamMember.findOne(match).populate('teamId')) as TeamMemberWithTeamSchema;
 
   if (!tmb) {
@@ -31,11 +31,11 @@ async function getTeam(match: Record<string, any>): Promise<TeamItemType> {
   };
 }
 
-export async function getTeamInfoByTmbId({ tmbId }: { tmbId: string }) {
+export async function getTmbInfoByTmbId({ tmbId }: { tmbId: string }) {
   if (!tmbId) {
     return Promise.reject('tmbId or userId is required');
   }
-  return getTeam({
+  return getTeamMember({
     _id: new Types.ObjectId(tmbId),
     status: notLeaveStatus
   });
@@ -45,7 +45,7 @@ export async function getUserDefaultTeam({ userId }: { userId: string }) {
   if (!userId) {
     return Promise.reject('tmbId or userId is required');
   }
-  return getTeam({
+  return getTeamMember({
     userId: new Types.ObjectId(userId),
     defaultTeam: true
   });
@@ -55,13 +55,15 @@ export async function createDefaultTeam({
   teamName = 'My Team',
   avatar = '/icon/logo.svg',
   balance,
-  maxSize = 5
+  maxSize = 5,
+  session
 }: {
   userId: string;
   teamName?: string;
   avatar?: string;
   balance?: number;
   maxSize?: number;
+  session: ClientSession;
 }) {
   // auth default team
   const tmb = await MongoTeamMember.findOne({
@@ -73,23 +75,33 @@ export async function createDefaultTeam({
     console.log('create default team', userId);
 
     // create
-    const { _id: insertedId } = await MongoTeam.create({
-      ownerId: userId,
-      name: teamName,
-      avatar,
-      balance,
-      maxSize,
-      createTime: new Date()
-    });
-    await MongoTeamMember.create({
-      teamId: insertedId,
-      userId,
-      name: 'Owner',
-      role: TeamMemberRoleEnum.owner,
-      status: TeamMemberStatusEnum.active,
-      createTime: new Date(),
-      defaultTeam: true
-    });
+    const [{ _id: insertedId }] = await MongoTeam.create(
+      [
+        {
+          ownerId: userId,
+          name: teamName,
+          avatar,
+          balance,
+          maxSize,
+          createTime: new Date()
+        }
+      ],
+      { session }
+    );
+    await MongoTeamMember.create(
+      [
+        {
+          teamId: insertedId,
+          userId,
+          name: 'Owner',
+          role: TeamMemberRoleEnum.owner,
+          status: TeamMemberStatusEnum.active,
+          createTime: new Date(),
+          defaultTeam: true
+        }
+      ],
+      { session }
+    );
   } else {
     console.log('default team exist', userId);
     await MongoTeam.findByIdAndUpdate(tmb.teamId, {
