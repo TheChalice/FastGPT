@@ -1,19 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { RenderInputProps } from '../type';
-import { getFlowStore, onChangeNode, useFlowProviderStoreType } from '../../../../FlowProvider';
+import { onChangeNode, useFlowProviderStore } from '../../../../FlowProvider';
 import { Button, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'next-i18next';
-import { DatasetSearchModeEnum } from '@fastgpt/global/core/dataset/constant';
+import { DatasetSearchModeEnum } from '@fastgpt/global/core/dataset/constants';
 import { FlowNodeTypeEnum } from '@fastgpt/global/core/module/node/constant';
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
-import { chatModelList } from '@/web/common/system/staticData';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import DatasetParamsModal from '@/components/core/module/DatasetParamsModal';
+import { useSystemStore } from '@/web/common/system/useSystemStore';
 
 const SelectDatasetParam = ({ inputs = [], moduleId }: RenderInputProps) => {
-  const [nodes, setNodes] = useState<useFlowProviderStoreType['nodes']>([]);
+  const { nodes } = useFlowProviderStore();
 
   const { t } = useTranslation();
+  const { llmModelList } = useSystemStore();
   const [data, setData] = useState({
     searchMode: DatasetSearchModeEnum.embedding,
     limit: 5,
@@ -29,14 +30,14 @@ const SelectDatasetParam = ({ inputs = [], moduleId }: RenderInputProps) => {
         const model =
           item.data.inputs.find((item) => item.key === ModuleInputKeyEnum.aiModel)?.value || '';
         const quoteMaxToken =
-          chatModelList.find((item) => item.model === model)?.quoteMaxToken || 3000;
+          llmModelList.find((item) => item.model === model)?.quoteMaxToken || 3000;
 
         maxTokens = Math.max(maxTokens, quoteMaxToken);
       }
     });
 
     return maxTokens;
-  }, [nodes]);
+  }, [llmModelList, nodes]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -52,47 +53,44 @@ const SelectDatasetParam = ({ inputs = [], moduleId }: RenderInputProps) => {
     });
   }, [inputs]);
 
-  useEffect(() => {
-    async () => {
-      const { nodes } = await getFlowStore();
-      setNodes(nodes);
-    };
-  }, []);
+  const Render = useMemo(() => {
+    return (
+      <>
+        <Button
+          variant={'whitePrimary'}
+          leftIcon={<MyIcon name={'common/settingLight'} w={'14px'} />}
+          onClick={onOpen}
+        >
+          {t('core.dataset.search.Params Setting')}
+        </Button>
+        {isOpen && (
+          <DatasetParamsModal
+            {...data}
+            maxTokens={tokenLimit}
+            onClose={onClose}
+            onSuccess={(e) => {
+              for (let key in e) {
+                const item = inputs.find((input) => input.key === key);
+                if (!item) continue;
+                onChangeNode({
+                  moduleId,
+                  type: 'updateInput',
+                  key,
+                  value: {
+                    ...item,
+                    //@ts-ignore
+                    value: e[key]
+                  }
+                });
+              }
+            }}
+          />
+        )}
+      </>
+    );
+  }, [data, inputs, isOpen, moduleId, onClose, onOpen, t, tokenLimit]);
 
-  return (
-    <>
-      <Button
-        variant={'whitePrimary'}
-        leftIcon={<MyIcon name={'common/settingLight'} w={'14px'} />}
-        onClick={onOpen}
-      >
-        {t('core.dataset.search.Params Setting')}
-      </Button>
-      {isOpen && (
-        <DatasetParamsModal
-          {...data}
-          maxTokens={tokenLimit}
-          onClose={onClose}
-          onSuccess={(e) => {
-            for (let key in e) {
-              const item = inputs.find((input) => input.key === key);
-              if (!item) continue;
-              onChangeNode({
-                moduleId,
-                type: 'updateInput',
-                key,
-                value: {
-                  ...item,
-                  //@ts-ignore
-                  value: e[key]
-                }
-              });
-            }
-          }}
-        />
-      )}
-    </>
-  );
+  return Render;
 };
 
 export default React.memo(SelectDatasetParam);

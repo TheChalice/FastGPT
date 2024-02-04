@@ -3,7 +3,7 @@ import { Box, Flex, Button, IconButton } from '@chakra-ui/react';
 import { useRequest } from '@/web/common/hooks/useRequest';
 import { useConfirm } from '@/web/common/hooks/useConfirm';
 import { useRouter } from 'next/router';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import { AppSchema } from '@fastgpt/global/core/app/type.d';
 import { delModelById } from '@/web/core/app/api';
 import { useTranslation } from 'next-i18next';
@@ -96,7 +96,7 @@ const AppCard = ({ appId }: { appId: string }) => {
             wordBreak={'break-all'}
             color={'myGray.600'}
           >
-            {appDetail.intro || '快来给应用一个介绍~'}
+            {appDetail.intro || t('core.app.tip.Add a intro to app')}
           </Box>
           <Flex>
             <Button
@@ -105,7 +105,7 @@ const AppCard = ({ appId }: { appId: string }) => {
               leftIcon={<MyIcon name={'core/chat/chatLight'} w={'16px'} />}
               onClick={() => router.push(`/chat?appId=${appId}`)}
             >
-              对话
+              {t('core.Chat')}
             </Button>
             <Button
               mx={3}
@@ -116,12 +116,12 @@ const AppCard = ({ appId }: { appId: string }) => {
                 router.replace({
                   query: {
                     appId,
-                    currentTab: 'outLink'
+                    currentTab: 'publish'
                   }
                 });
               }}
             >
-              外接
+              {t('core.app.navbar.Publish')}
             </Button>
             {appDetail.isOwner && (
               <Button
@@ -130,7 +130,7 @@ const AppCard = ({ appId }: { appId: string }) => {
                 leftIcon={<MyIcon name={'common/settingLight'} w={'16px'} />}
                 onClick={() => setSettingAppInfo(appDetail)}
               >
-                设置
+                {t('common.Setting')}
               </Button>
             )}
           </Flex>

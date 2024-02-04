@@ -1,8 +1,8 @@
 import { UserGuideModule } from '@fastgpt/global/core/module/template/system/userGuide';
 import { UserInputModule } from '@fastgpt/global/core/module/template/system/userInput';
-import { HistoryModule } from '@fastgpt/global/core/module/template/system/abandon/history';
 import { AiChatModule } from '@fastgpt/global/core/module/template/system/aiChat';
 import { DatasetSearchModule } from '@fastgpt/global/core/module/template/system/datasetSearch';
+import { DatasetConcatModule } from '@fastgpt/global/core/module/template/system/datasetConcat';
 import { AssignedAnswerModule } from '@fastgpt/global/core/module/template/system/assignedAnswer';
 import { ClassifyQuestionModule } from '@fastgpt/global/core/module/template/system/classifyQuestion';
 import { ContextExtractModule } from '@fastgpt/global/core/module/template/system/contextExtract';
@@ -25,6 +25,7 @@ export const appSystemModuleTemplates: FlowModuleTemplateType[] = [
   AiChatModule,
   AssignedAnswerModule,
   DatasetSearchModule,
+  DatasetConcatModule,
   RunAppModule,
   ClassifyQuestionModule,
   ContextExtractModule,
@@ -37,18 +38,20 @@ export const pluginSystemModuleTemplates: FlowModuleTemplateType[] = [
   AiChatModule,
   AssignedAnswerModule,
   DatasetSearchModule,
+  DatasetConcatModule,
   RunAppModule,
   ClassifyQuestionModule,
   ContextExtractModule,
   HttpModule,
   AiCFR
 ];
+
 export const moduleTemplatesFlat: FlowModuleTemplateType[] = [
   UserGuideModule,
   UserInputModule,
-  HistoryModule,
   AiChatModule,
   DatasetSearchModule,
+  DatasetConcatModule,
   AssignedAnswerModule,
   ClassifyQuestionModule,
   ContextExtractModule,
@@ -63,37 +66,37 @@ export const moduleTemplatesFlat: FlowModuleTemplateType[] = [
 export const moduleTemplatesList: moduleTemplateListType = [
   {
     type: ModuleTemplateTypeEnum.userGuide,
-    label: '引导模块',
+    label: 'core.module.template.Guide module',
     list: []
   },
   {
     type: ModuleTemplateTypeEnum.systemInput,
-    label: '系统输入',
-    list: []
-  },
-  {
-    type: ModuleTemplateTypeEnum.tools,
-    label: '工具',
+    label: 'core.module.template.System input module',
     list: []
   },
   {
     type: ModuleTemplateTypeEnum.textAnswer,
-    label: '文本输出',
+    label: 'core.module.template.Response module',
     list: []
   },
   {
     type: ModuleTemplateTypeEnum.functionCall,
-    label: '功能调用',
+    label: 'core.module.template.Function module',
+    list: []
+  },
+  {
+    type: ModuleTemplateTypeEnum.tools,
+    label: 'core.module.template.Tool module',
     list: []
   },
   {
     type: ModuleTemplateTypeEnum.externalCall,
-    label: '外部调用',
+    label: 'core.module.template.External module',
     list: []
   },
   {
     type: ModuleTemplateTypeEnum.personalPlugin,
-    label: '个人插件',
+    label: 'core.module.template.My plugin module',
     list: []
   },
   {

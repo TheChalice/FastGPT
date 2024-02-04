@@ -49,7 +49,7 @@ const ChatTest = ({ appId }: { appId: string }) => {
           appName: `调试-${appDetail.name}`
         },
         onMessage: generatingMessage,
-        abortSignal: controller
+        abortCtrl: controller
       });
 
       return { responseText, responseData };
@@ -114,7 +114,7 @@ const ChatTest = ({ appId }: { appId: string }) => {
           right={0}
           left={0}
           bottom={0}
-          bg={'rgba(255,255,255,0.6)'}
+          bg={'rgba(255,255,255,0.7)'}
           alignItems={'center'}
           justifyContent={'center'}
           flexDirection={'column'}

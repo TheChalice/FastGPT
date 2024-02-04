@@ -10,7 +10,6 @@ import SideTabs from '@/components/SideTabs';
 import Tabs from '@/components/Tabs';
 import UserInfo from './components/Info';
 import { serviceSideProps } from '@/web/common/utils/i18n';
-import { feConfigs } from '@/web/common/system/staticData';
 import { useTranslation } from 'next-i18next';
 import Script from 'next/script';
 
@@ -35,6 +34,7 @@ enum TabEnum {
 const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
   const { t } = useTranslation();
   const { userInfo, setUserInfo } = useUserStore();
+  const { feConfigs, isPc } = useSystemStore();
 
   const tabList = [
     {
@@ -51,7 +51,16 @@ const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
           }
         ]
       : []),
-    ...(feConfigs?.isPlus && feConfigs?.show_pay
+    ...(feConfigs?.show_pay && userInfo?.team.canWrite
+      ? [
+          {
+            icon: 'support/pay/payRecordLight',
+            label: t('user.Recharge Record'),
+            id: TabEnum.pay
+          }
+        ]
+      : []),
+    ...(feConfigs?.show_pay
       ? [
           {
             icon: 'support/pay/priceLight',
@@ -60,21 +69,13 @@ const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
           }
         ]
       : []),
+
     ...(feConfigs?.show_promotion
       ? [
           {
             icon: 'support/account/promotionLight',
             label: t('user.Promotion Record'),
             id: TabEnum.promotion
-          }
-        ]
-      : []),
-    ...(feConfigs?.show_pay && userInfo?.team.canWrite
-      ? [
-          {
-            icon: 'support/pay/payRecordLight',
-            label: t('user.Recharge Record'),
-            id: TabEnum.pay
           }
         ]
       : []),
@@ -115,7 +116,6 @@ const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { isPc } = useSystemStore();
 
   const setCurrentTab = useCallback(
     (tab: string) => {

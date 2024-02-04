@@ -16,7 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import { streamFetch } from '@/web/common/api/fetch';
 import { useChatStore } from '@/web/core/chat/storeChat';
 import { useLoading } from '@/web/common/hooks/useLoading';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import { customAlphabet } from 'nanoid';
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 12);
 import type { ChatHistoryItemType } from '@fastgpt/global/core/chat/type.d';
@@ -80,13 +80,13 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
           chatId: completionChatId
         },
         onMessage: generatingMessage,
-        abortSignal: controller
+        abortCtrl: controller
       });
 
       const newTitle =
         chatContentReplaceBlock(prompts[0].content).slice(0, 20) ||
         prompts[1]?.value?.slice(0, 20) ||
-        '新对话';
+        t('core.chat.New Chat');
 
       // new chat
       if (completionChatId !== chatId) {
@@ -126,7 +126,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
 
       return { responseText, responseData, isNewChat: forbidRefresh.current };
     },
-    [appId, chatId, histories, pushHistory, router, setChatData, updateHistory]
+    [appId, chatId, histories, pushHistory, router, setChatData, t, updateHistory]
   );
 
   // get chat app info
@@ -166,7 +166,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
         setLastChatAppId('');
         setLastChatId('');
         toast({
-          title: getErrText(e, '初始化聊天失败'),
+          title: getErrText(e, t('core.chat.Failed to initialize chat')),
           status: 'error'
         });
         if (e?.code === 501) {
@@ -183,7 +183,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
       setIsLoading(false);
       return null;
     },
-    [setIsLoading, setChatData, router, setLastChatAppId, setLastChatId, toast]
+    [setIsLoading, setChatData, setLastChatAppId, setLastChatId, toast, t, router]
   );
   // 初始化聊天框
   useQuery(['init', { appId, chatId }], () => {
@@ -210,7 +210,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
         if (apps.length === 0) {
           toast({
             status: 'error',
-            title: t('chat.You need to a chat app')
+            title: t('core.chat.You need to a chat app')
           });
           router.replace('/app/list');
         } else {
@@ -348,7 +348,6 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
                 userGuideModule={chatData.app?.userGuideModule}
                 showFileSelector={checkChatSupportSelectFileByChatModels(chatData.app.chatModels)}
                 feedbackType={'user'}
-                onUpdateVariable={(e) => {}}
                 onStartChat={startChat}
                 onDelMessage={(e) => delOneHistoryItem({ ...e, appId, chatId })}
                 appId={appId}

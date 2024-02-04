@@ -1,6 +1,6 @@
 import { MongoDatasetTraining } from '@fastgpt/service/core/dataset/training/schema';
 import { pushQABill } from '@/service/support/wallet/bill/push';
-import { DatasetDataIndexTypeEnum, TrainingModeEnum } from '@fastgpt/global/core/dataset/constant';
+import { DatasetDataIndexTypeEnum, TrainingModeEnum } from '@fastgpt/global/core/dataset/constants';
 import { sendOneInform } from '../support/user/inform/api';
 import { getAIApi } from '@fastgpt/service/core/ai/config';
 import type { ChatMessageItemType } from '@fastgpt/global/core/ai/type.d';
@@ -8,20 +8,16 @@ import { addLog } from '@fastgpt/service/common/system/log';
 import { splitText2Chunks } from '@fastgpt/global/common/string/textSplitter';
 import { replaceVariable } from '@fastgpt/global/common/string/tools';
 import { Prompt_AgentQA } from '@/global/core/prompt/agent';
-import { pushDataToDatasetCollection } from '@/pages/api/core/dataset/data/pushData';
 import { getErrText } from '@fastgpt/global/common/error/utils';
 import { authTeamBalance } from '../support/permission/auth/bill';
 import type { PushDatasetDataChunkProps } from '@fastgpt/global/core/dataset/api.d';
 import { UserErrEnum } from '@fastgpt/global/common/error/code/user';
 import { lockTrainingDataByTeamId } from '@fastgpt/service/core/dataset/training/controller';
+import { pushDataToTrainingQueue } from '@/service/core/dataset/data/controller';
+import { getLLMModel } from '../core/ai/model';
 
-const reduceQueue = (retry = false) => {
+const reduceQueue = () => {
   global.qaQueueLen = global.qaQueueLen > 0 ? global.qaQueueLen - 1 : 0;
-  if (global.qaQueueLen === 0 && retry) {
-    setTimeout(() => {
-      generateQA();
-    }, 60000);
-  }
 
   return global.vectorQueueLen === 0;
 };
@@ -116,7 +112,7 @@ export async function generateQA(): Promise<any> {
 
   try {
     const startTime = Date.now();
-    const model = data.model ?? global.qaModels[0].model;
+    const model = getLLMModel(data.model)?.model;
     const prompt = `${data.prompt || Prompt_AgentQA.description}
 ${replaceVariable(Prompt_AgentQA.fixedText, { text })}`;
 
@@ -128,7 +124,9 @@ ${replaceVariable(Prompt_AgentQA.fixedText, { text })}`;
       }
     ];
 
-    const ai = getAIApi(undefined, 600000);
+    const ai = getAIApi({
+      timeout: 600000
+    });
     const chatResponse = await ai.chat.completions.create({
       model,
       temperature: 0.3,
@@ -140,15 +138,15 @@ ${replaceVariable(Prompt_AgentQA.fixedText, { text })}`;
     const qaArr = formatSplitText(answer, text); // 格式化后的QA对
 
     // get vector and insert
-    const { insertLen } = await pushDataToDatasetCollection({
+    const { insertLen } = await pushDataToTrainingQueue({
       teamId: data.teamId,
       tmbId: data.tmbId,
       collectionId: data.collectionId,
+      trainingMode: TrainingModeEnum.chunk,
       data: qaArr.map((item) => ({
         ...item,
         chunkIndex: data.chunkIndex
       })),
-      mode: TrainingModeEnum.chunk,
       billId: data.billId
     });
 
@@ -166,8 +164,7 @@ ${replaceVariable(Prompt_AgentQA.fixedText, { text })}`;
       pushQABill({
         teamId: data.teamId,
         tmbId: data.tmbId,
-        inputTokens: chatResponse.usage?.prompt_tokens || 0,
-        outputTokens: chatResponse.usage?.completion_tokens || 0,
+        charsLength: `${prompt}${answer}`.length,
         billId: data.billId,
         model
       });
@@ -178,7 +175,7 @@ ${replaceVariable(Prompt_AgentQA.fixedText, { text })}`;
     reduceQueue();
     generateQA();
   } catch (err: any) {
-    reduceQueue(true);
+    reduceQueue();
     // log
     if (err?.response) {
       addLog.info('openai error: 生成QA错误', {
@@ -243,7 +240,7 @@ function formatSplitText(text: string, rawText: string) {
 
   // empty result. direct split chunk
   if (result.length === 0) {
-    const { chunks } = splitText2Chunks({ text: rawText, chunkLen: 512, countTokens: false });
+    const { chunks } = splitText2Chunks({ text: rawText, chunkLen: 512 });
     chunks.forEach((chunk) => {
       result.push({
         q: chunk,

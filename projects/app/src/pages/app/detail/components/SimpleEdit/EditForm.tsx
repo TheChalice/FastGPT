@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState, useTransition } from 'react';
 import {
   Box,
   Flex,
@@ -15,7 +15,6 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { appModules2Form, getDefaultAppForm } from '@fastgpt/global/core/app/utils';
 import type { AppSimpleEditFormType } from '@fastgpt/global/core/app/type.d';
-import { chatModelList, simpleModeTemplates } from '@/web/common/system/staticData';
 import { chatNodeSystemPromptTip, welcomeTextTip } from '@fastgpt/global/core/module/template/tip';
 import { useRequest } from '@/web/common/hooks/useRequest';
 import { useConfirm } from '@/web/common/hooks/useConfirm';
@@ -24,7 +23,6 @@ import { useTranslation } from 'next-i18next';
 import { AppTypeEnum } from '@fastgpt/global/core/app/constants';
 import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
-
 import { postForm2Modules } from '@/web/core/app/utils';
 
 import dynamic from 'next/dynamic';
@@ -34,9 +32,11 @@ import Avatar from '@/components/Avatar';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import { SimpleModeTemplate_FastGPT_Universal } from '@/global/core/app/constants';
 import VariableEdit from '@/components/core/module/Flow/components/modules/VariableEdit';
-import PromptTextarea from '@/components/common/Textarea/PromptTextarea/index';
-import { DatasetSearchModeMap } from '@fastgpt/global/core/dataset/constant';
+import MyTextarea from '@/components/common/Textarea/MyTextarea/index';
+import { DatasetSearchModeMap } from '@fastgpt/global/core/dataset/constants';
 import SelectAiModel from '@/components/Select/SelectAiModel';
+import PromptEditor from '@fastgpt/web/components/common/Textarea/PromptEditor';
+import { formatEditorVariablePickerIcon } from '@fastgpt/global/core/module/utils';
 
 const DatasetSelectModal = dynamic(() => import('@/components/core/module/DatasetSelectModal'));
 const DatasetParamsModal = dynamic(() => import('@/components/core/module/DatasetParamsModal'));
@@ -59,10 +59,11 @@ const EditForm = ({
   const { t } = useTranslation();
   const { appDetail, updateAppDetail } = useAppStore();
   const { loadAllDatasets, allDatasets } = useDatasetStore();
-  const { isPc } = useSystemStore();
+  const { isPc, llmModelList, reRankModelList, simpleModeTemplates } = useSystemStore();
   const [refresh, setRefresh] = useState(false);
+  const [, startTst] = useTransition();
 
-  const { register, setValue, getValues, reset, handleSubmit, control } =
+  const { setValue, getValues, reset, handleSubmit, control, watch } =
     useForm<AppSimpleEditFormType>({
       defaultValues: getDefaultAppForm()
     });
@@ -97,37 +98,37 @@ const EditForm = ({
     content: t('core.app.edit.Confirm Save App Tip')
   });
 
-  const chatModelSelectList = useMemo(() => {
-    return chatModelList.map((item) => ({
+  const variables = watch('userGuide.variables');
+  const formatVariables = useMemo(() => formatEditorVariablePickerIcon(variables), [variables]);
+  const aiSystemPrompt = watch('aiSettings.systemPrompt');
+  const searchMode = watch('dataset.searchMode');
+
+  const chatModelSelectList = (() =>
+    llmModelList.map((item) => ({
       value: item.model,
       label: item.name
-    }));
-  }, [refresh]);
+    })))();
 
   const selectDatasets = useMemo(
     () => allDatasets.filter((item) => datasets.find((dataset) => dataset.datasetId === item._id)),
     [allDatasets, datasets]
   );
 
-  const selectSimpleTemplate = useMemo(
-    () =>
-      simpleModeTemplates?.find((item) => item.id === getValues('templateId')) ||
-      SimpleModeTemplate_FastGPT_Universal,
-    [getValues, refresh]
-  );
+  const selectSimpleTemplate = (() =>
+    simpleModeTemplates?.find((item) => item.id === getValues('templateId')) ||
+    SimpleModeTemplate_FastGPT_Universal)();
 
   const tokenLimit = useMemo(() => {
     return (
-      chatModelList.find((item) => item.model === getValues('aiSettings.model'))?.quoteMaxToken ||
+      llmModelList.find((item) => item.model === getValues('aiSettings.model'))?.quoteMaxToken ||
       3000
     );
-  }, [getValues, refresh]);
+  }, [getValues, llmModelList]);
 
   const datasetSearchMode = useMemo(() => {
-    const mode = getValues('dataset.searchMode');
-    if (!mode) return '';
-    return t(DatasetSearchModeMap[mode]?.title);
-  }, [getValues, t, refresh]);
+    if (!searchMode) return '';
+    return t(DatasetSearchModeMap[searchMode]?.title);
+  }, [searchMode, t]);
 
   const { mutate: onSubmitSave, isLoading: isSaving } = useRequest({
     mutationFn: async (data: AppSimpleEditFormType) => {
@@ -144,21 +145,21 @@ const EditForm = ({
     errorToast: t('common.Save Failed')
   });
 
-  const appModule2Form = useCallback(() => {
-    const formVal = appModules2Form({
-      templateId: appDetail.simpleTemplateId,
-      modules: appDetail.modules
-    });
-
-    reset(formVal);
-    setTimeout(() => {
-      setRefresh((state) => !state);
-    }, 100);
-  }, [appDetail.modules, appDetail.simpleTemplateId, reset]);
-
-  useEffect(() => {
-    appModule2Form();
-  }, [appModule2Form]);
+  const { isSuccess: isInitd } = useQuery(
+    ['init', appDetail],
+    () => {
+      const formatVal = appModules2Form({
+        templateId: appDetail.simpleTemplateId,
+        modules: appDetail.modules
+      });
+      reset(formatVal);
+      setRefresh(!refresh);
+      return formatVal;
+    },
+    {
+      enabled: !!appDetail._id
+    }
+  );
   useQuery(['loadAllDatasets'], loadAllDatasets);
 
   const BoxStyles: BoxProps = {
@@ -229,15 +230,15 @@ const EditForm = ({
           {/* simple mode select */}
           <Flex {...BoxStyles}>
             <Flex alignItems={'center'} flex={'1 0 0'}>
-              <Image alt={''} src={'/imgs/module/templates.png'} w={'18px'} />
+              <MyIcon name={'core/app/simpleMode/template'} w={'20px'} />
               <Box mx={2}>{t('core.app.simple.mode template select')}</Box>
             </Flex>
             <MySelect
               w={['200px', '250px']}
               list={
                 simpleModeTemplates?.map((item) => ({
-                  alias: item.name,
-                  label: item.desc,
+                  alias: t(item.name),
+                  label: t(item.desc),
                   value: item.id
                 })) || []
               }
@@ -253,7 +254,7 @@ const EditForm = ({
           {selectSimpleTemplate?.systemForm?.aiSettings && (
             <Box {...BoxStyles}>
               <Flex alignItems={'center'}>
-                <Image alt={''} src={'/imgs/module/AI.png'} w={'18px'} />
+                <MyIcon name={'core/app/simpleMode/ai'} w={'20px'} />
                 <Box ml={2} flex={1}>
                   {t('app.AI Settings')}
                 </Box>
@@ -263,7 +264,7 @@ const EditForm = ({
                   selectSimpleTemplate.systemForm.aiSettings.quotePrompt) && (
                   <Flex {...BoxBtnStyles} onClick={onOpenAIChatSetting}>
                     <MyIcon mr={1} name={'common/settingLight'} w={'14px'} />
-                    {t('app.Open AI Advanced Settings')}
+                    {t('common.More settings')}
                   </Flex>
                 )}
               </Flex>
@@ -278,7 +279,7 @@ const EditForm = ({
                       onchange={(val: any) => {
                         setValue('aiSettings.model', val);
                         const maxToken =
-                          chatModelList.find((item) => item.model === getValues('aiSettings.model'))
+                          llmModelList.find((item) => item.model === getValues('aiSettings.model'))
                             ?.maxResponse || 4000;
                         const token = maxToken / 2;
                         setValue('aiSettings.maxToken', token);
@@ -293,20 +294,23 @@ const EditForm = ({
                 <Flex mt={10} alignItems={'flex-start'}>
                   <Box {...LabelStyles}>
                     {t('core.ai.Prompt')}
-                    <MyTooltip label={chatNodeSystemPromptTip} forceShow>
+                    <MyTooltip label={t(chatNodeSystemPromptTip)} forceShow>
                       <QuestionOutlineIcon display={['none', 'inline']} ml={1} />
                     </MyTooltip>
                   </Box>
-                  <PromptTextarea
-                    flex={1}
-                    bg={'myWhite.400'}
-                    rows={5}
-                    placeholder={chatNodeSystemPromptTip}
-                    defaultValue={getValues('aiSettings.systemPrompt')}
-                    onBlur={(e) => {
-                      setValue('aiSettings.systemPrompt', e.target.value || '');
-                    }}
-                  />
+                  {isInitd && (
+                    <PromptEditor
+                      value={aiSystemPrompt}
+                      onChange={(text) => {
+                        startTst(() => {
+                          setValue('aiSettings.systemPrompt', text);
+                        });
+                      }}
+                      variables={formatVariables}
+                      placeholder={t('core.app.tip.chatNodeSystemPromptTip')}
+                      title={t('core.ai.Prompt')}
+                    />
+                  )}
                 </Flex>
               )}
             </Box>
@@ -317,7 +321,7 @@ const EditForm = ({
             <Box {...BoxStyles}>
               <Flex alignItems={'center'}>
                 <Flex alignItems={'center'} flex={1}>
-                  <Image alt={''} src={'/imgs/module/db.png'} w={'18px'} />
+                  <MyIcon name={'core/app/simpleMode/dataset'} w={'20px'} />
                   <Box ml={2}>{t('core.dataset.Choose Dataset')}</Box>
                 </Flex>
                 {selectSimpleTemplate.systemForm.dataset.datasets && (
@@ -344,6 +348,13 @@ const EditForm = ({
               {getValues('dataset.datasets').length > 0 && (
                 <Flex mt={1} color={'myGray.600'} fontSize={'sm'} mb={2}>
                   {t('core.dataset.search.search mode')}: {datasetSearchMode}
+                  {', '}
+                  {reRankModelList.length > 0 && (
+                    <>
+                      {t('core.dataset.search.ReRank')}:{' '}
+                      {getValues('dataset.usingReRank') ? '✅' : '✖'}
+                    </>
+                  )}
                   {', '}
                   {t('core.dataset.search.Min Similarity')}: {getValues('dataset.similarity')}
                   {', '}
@@ -409,7 +420,7 @@ const EditForm = ({
           {selectSimpleTemplate?.systemForm?.userGuide?.variables && (
             <Box {...BoxStyles}>
               <VariableEdit
-                variables={getValues('userGuide.variables')}
+                variables={variables}
                 onChange={(e) => {
                   setValue('userGuide.variables', e);
                   setRefresh(!refresh);
@@ -422,17 +433,17 @@ const EditForm = ({
           {selectSimpleTemplate?.systemForm?.userGuide?.welcomeText && (
             <Box {...BoxStyles}>
               <Flex alignItems={'center'}>
-                <Image alt={''} src={'/imgs/module/userGuide.png'} w={'18px'} />
+                <MyIcon name={'core/app/simpleMode/chat'} w={'20px'} />
                 <Box mx={2}>{t('core.app.Welcome Text')}</Box>
-                <MyTooltip label={welcomeTextTip} forceShow>
+                <MyTooltip label={t(welcomeTextTip)} forceShow>
                   <QuestionOutlineIcon />
                 </MyTooltip>
               </Flex>
-              <PromptTextarea
+              <MyTextarea
                 mt={2}
                 bg={'myWhite.400'}
                 rows={5}
-                placeholder={welcomeTextTip}
+                placeholder={t(welcomeTextTip)}
                 defaultValue={getValues('userGuide.welcomeText')}
                 onBlur={(e) => {
                   setValue('userGuide.welcomeText', e.target.value || '');
@@ -481,6 +492,7 @@ const EditForm = ({
           }}
           defaultData={getValues('aiSettings')}
           simpleModeTemplate={selectSimpleTemplate}
+          pickerMenu={formatVariables}
         />
       )}
       {isOpenDatasetSelect && (

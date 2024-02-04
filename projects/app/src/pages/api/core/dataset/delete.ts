@@ -2,32 +2,46 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 import { connectToDatabase } from '@/service/mongo';
 import { authDataset } from '@fastgpt/service/support/permission/auth/dataset';
-import { delDatasetRelevantData } from '@fastgpt/service/core/dataset/data/controller';
-import { findDatasetIdTreeByTopDatasetId } from '@fastgpt/service/core/dataset/controller';
+import { delDatasetRelevantData } from '@fastgpt/service/core/dataset/controller';
+import { findDatasetAndAllChildren } from '@fastgpt/service/core/dataset/controller';
 import { MongoDataset } from '@fastgpt/service/core/dataset/schema';
+import { mongoSessionRun } from '@fastgpt/service/common/mongo/sessionRun';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { id } = req.query as {
+    const { id: datasetId } = req.query as {
       id: string;
     };
 
-    if (!id) {
+    if (!datasetId) {
       throw new Error('缺少参数');
     }
 
     // auth owner
-    await authDataset({ req, authToken: true, datasetId: id, per: 'owner' });
+    const { teamId } = await authDataset({
+      req,
+      authToken: true,
+      authApiKey: true,
+      datasetId,
+      per: 'owner'
+    });
 
-    const deletedIds = await findDatasetIdTreeByTopDatasetId(id);
+    const datasets = await findDatasetAndAllChildren({
+      teamId,
+      datasetId
+    });
 
     // delete all dataset.data and pg data
-    await delDatasetRelevantData({ datasetIds: deletedIds });
-
-    // delete dataset data
-    await MongoDataset.deleteMany({
-      _id: { $in: deletedIds }
+    await mongoSessionRun(async (session) => {
+      // delete dataset data
+      await delDatasetRelevantData({ datasets, session });
+      await MongoDataset.deleteMany(
+        {
+          _id: { $in: datasets.map((d) => d._id) }
+        },
+        { session }
+      );
     });
 
     jsonRes(res);

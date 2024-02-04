@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Flex, IconButton, useTheme } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useQuery } from '@tanstack/react-query';
-import { feConfigs } from '@/web/common/system/staticData';
+import { useSystemStore } from '@/web/common/system/useSystemStore';
 
 import Tabs from '@/components/Tabs';
 import SideTabs from '@/components/SideTabs';
@@ -16,6 +16,7 @@ import SimpleEdit from './components/SimpleEdit';
 import { serviceSideProps } from '@/web/common/utils/i18n';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import Head from 'next/head';
+import { useTranslation } from 'next-i18next';
 
 const FlowEdit = dynamic(() => import('./components/FlowEdit'), {
   loading: () => <Loading />
@@ -26,14 +27,16 @@ const Logs = dynamic(() => import('./components/Logs'), {});
 enum TabEnum {
   'simpleEdit' = 'simpleEdit',
   'adEdit' = 'adEdit',
-  'outLink' = 'outLink',
+  'publish' = 'publish',
   'logs' = 'logs',
   'startChat' = 'startChat'
 }
 
 const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
+  const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
+  const { feConfigs } = useSystemStore();
   const { toast } = useToast();
   const { appId } = router.query as { appId: string };
   const { appDetail, loadAppDetail, clearAppModules } = useAppStore();
@@ -52,23 +55,39 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
 
   const tabList = useMemo(
     () => [
-      { label: '简易配置', id: TabEnum.simpleEdit, icon: 'common/overviewLight' },
+      {
+        label: t('core.app.navbar.Simple mode'),
+        id: TabEnum.simpleEdit,
+        icon: 'common/overviewLight'
+      },
       ...(feConfigs?.hide_app_flow
         ? []
-        : [{ label: '高级编排', id: TabEnum.adEdit, icon: 'common/settingLight' }]),
-      { label: '外部使用', id: TabEnum.outLink, icon: 'support/outlink/shareLight' },
-      { label: '对话日志', id: TabEnum.logs, icon: 'core/app/logsLight' },
-      { label: '立即对话', id: TabEnum.startChat, icon: 'core/chat/chatLight' }
+        : [
+            {
+              label: t('core.app.navbar.Flow mode'),
+              id: TabEnum.adEdit,
+              icon: 'core/modules/flowLight'
+            }
+          ]),
+      {
+        label: t('core.app.navbar.Publish app'),
+        id: TabEnum.publish,
+        icon: 'support/outlink/shareLight'
+      },
+      { label: t('app.Chat logs'), id: TabEnum.logs, icon: 'core/app/logsLight' },
+      { label: t('core.Start chat'), id: TabEnum.startChat, icon: 'core/chat/chatLight' }
     ],
-    []
+    [feConfigs?.hide_app_flow, t]
   );
+
+  const onCloseFlowEdit = useCallback(() => setCurrentTab(TabEnum.simpleEdit), [setCurrentTab]);
 
   useEffect(() => {
     const listen =
       process.env.NODE_ENV === 'production'
         ? (e: any) => {
             e.preventDefault();
-            e.returnValue = '内容已修改，确认离开页面吗？';
+            e.returnValue = t('core.common.tip.leave page');
           }
         : () => {};
     window.addEventListener('beforeunload', listen);
@@ -82,7 +101,7 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
   useQuery([appId], () => loadAppDetail(appId, true), {
     onError(err: any) {
       toast({
-        title: err?.message || '获取应用异常',
+        title: err?.message || t('core.app.error.Get app failed'),
         status: 'error'
       });
       router.replace('/app/list');
@@ -146,7 +165,7 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
                 borderRadius={'50%'}
                 aria-label={''}
               />
-              我的应用
+              {t('app.My Apps')}
             </Flex>
           </Box>
           {/* phone tab */}
@@ -173,10 +192,10 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
           <Box flex={'1 0 0'} h={[0, '100%']} overflow={['overlay', '']}>
             {currentTab === TabEnum.simpleEdit && <SimpleEdit appId={appId} />}
             {currentTab === TabEnum.adEdit && appDetail && (
-              <FlowEdit app={appDetail} onClose={() => setCurrentTab(TabEnum.simpleEdit)} />
+              <FlowEdit app={appDetail} onClose={onCloseFlowEdit} />
             )}
             {currentTab === TabEnum.logs && <Logs appId={appId} />}
-            {currentTab === TabEnum.outLink && <OutLink appId={appId} />}
+            {currentTab === TabEnum.publish && <OutLink appId={appId} />}
           </Box>
         </Flex>
       </PageContainer>

@@ -22,10 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   jsonRes<InitDateResponse>(res, {
     data: {
       feConfigs: global.feConfigs,
-      chatModels: global.chatModels,
-      qaModels: global.qaModels,
-      cqModels: global.cqModels,
-      extractModels: global.extractModels,
+      subPlans: global.subPlans,
+      llmModels: global.llmModels,
       vectorModels: global.vectorModels,
       reRankModels:
         global.reRankModels?.map((item) => ({
@@ -33,7 +31,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           requestUrl: undefined,
           requestAuth: undefined
         })) || [],
-      qgModes: global.qgModels,
       whisperModel: global.whisperModel,
       audioSpeechModels: global.audioSpeechModels,
       systemVersion: global.systemVersion || '0.0.0',
@@ -55,43 +52,49 @@ const defaultFeConfigs: FastGPTFeConfigsType = {
     websiteSyncLimitMinuted: 0
   },
   scripts: [],
-  favicon: '/favicon.ico'
+  favicon: '/favicon.ico',
+  uploadFileMaxSize: 500
 };
 
 export async function getInitConfig() {
+  if (global.systemInitd) return;
+  global.systemInitd = true;
+
   try {
-    if (global.feConfigs) return;
     await connectToDatabase();
 
-    initGlobal();
-    await initSystemConfig();
+    await Promise.all([
+      initGlobal(),
+      initSystemConfig(),
+      getSimpleModeTemplates(),
+      getSystemVersion(),
+      getSystemPlugin()
+    ]);
+
+    console.log({
+      simpleModeTemplates: global.simpleModeTemplates,
+      communityPlugins: global.communityPlugins
+    });
   } catch (error) {
     console.error('Load init config error', error);
+    global.systemInitd = false;
 
     if (!global.feConfigs) {
       exit(1);
     }
   }
-  await getSimpleModeTemplates();
+}
 
-  getSystemVersion();
-  getSystemPlugin();
+export function initGlobal() {
+  if (global.communityPlugins) return;
 
-  console.log({
-    feConfigs: global.feConfigs,
-    systemEnv: global.systemEnv,
-    chatModels: global.chatModels,
-    qaModels: global.qaModels,
-    cqModels: global.cqModels,
-    extractModels: global.extractModels,
-    qgModels: global.qgModels,
-    vectorModels: global.vectorModels,
-    reRankModels: global.reRankModels,
-    audioSpeechModels: global.audioSpeechModels,
-    whisperModel: global.whisperModel,
-    simpleModeTemplates: global.simpleModeTemplates,
-    communityPlugins: global.communityPlugins
-  });
+  global.communityPlugins = [];
+  global.simpleModeTemplates = [];
+  global.qaQueueLen = global.qaQueueLen ?? 0;
+  global.vectorQueueLen = global.vectorQueueLen ?? 0;
+  // init tikToken
+  getTikTokenEnc();
+  initHttpAgent();
 }
 
 export async function initSystemConfig() {
@@ -113,11 +116,8 @@ export async function initSystemConfig() {
       ...fileRes.systemEnv,
       ...(dbConfig.systemEnv || {})
     },
-    chatModels: dbConfig.chatModels || fileRes.chatModels || [],
-    qaModels: dbConfig.qaModels || fileRes.qaModels || [],
-    cqModels: dbConfig.cqModels || fileRes.cqModels || [],
-    extractModels: dbConfig.extractModels || fileRes.extractModels || [],
-    qgModels: dbConfig.qgModels || fileRes.qgModels || [],
+    subPlans: dbConfig.subPlans || fileRes.subPlans,
+    llmModels: dbConfig.llmModels || fileRes.llmModels || [],
     vectorModels: dbConfig.vectorModels || fileRes.vectorModels || [],
     reRankModels: dbConfig.reRankModels || fileRes.reRankModels || [],
     audioSpeechModels: dbConfig.audioSpeechModels || fileRes.audioSpeechModels || [],
@@ -127,29 +127,28 @@ export async function initSystemConfig() {
   // set config
   global.feConfigs = config.feConfigs;
   global.systemEnv = config.systemEnv;
+  global.subPlans = config.subPlans;
 
-  global.chatModels = config.chatModels;
-  global.qaModels = config.qaModels;
-  global.cqModels = config.cqModels;
-  global.extractModels = config.extractModels;
-  global.qgModels = config.qgModels;
+  global.llmModels = config.llmModels;
   global.vectorModels = config.vectorModels;
   global.reRankModels = config.reRankModels;
   global.audioSpeechModels = config.audioSpeechModels;
   global.whisperModel = config.whisperModel;
-}
 
-export function initGlobal() {
-  global.communityPlugins = [];
-  global.simpleModeTemplates = [];
-  global.qaQueueLen = global.qaQueueLen ?? 0;
-  global.vectorQueueLen = global.vectorQueueLen ?? 0;
-  // init tikToken
-  getTikTokenEnc();
-  initHttpAgent();
+  console.log({
+    feConfigs: global.feConfigs,
+    systemEnv: global.systemEnv,
+    subPlans: global.subPlans,
+    llmModels: global.llmModels,
+    vectorModels: global.vectorModels,
+    reRankModels: global.reRankModels,
+    audioSpeechModels: global.audioSpeechModels,
+    whisperModel: global.whisperModel
+  });
 }
 
 export function getSystemVersion() {
+  if (global.systemVersion) return;
   try {
     if (process.env.NODE_ENV === 'development') {
       global.systemVersion = process.env.npm_package_version || '0.0.0';

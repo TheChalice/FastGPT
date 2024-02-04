@@ -45,7 +45,10 @@ export enum FlowNodeTypeEnum {
   questionInput = 'questionInput',
   historyNode = 'historyNode',
   chatNode = 'chatNode',
+
   datasetSearchNode = 'datasetSearchNode',
+  datasetConcatNode = 'datasetConcatNode',
+
   answerNode = 'answerNode',
   classifyQuestion = 'classifyQuestion',
   contentExtract = 'contentExtract',
@@ -54,10 +57,9 @@ export enum FlowNodeTypeEnum {
   pluginModule = 'pluginModule',
   pluginInput = 'pluginInput',
   pluginOutput = 'pluginOutput',
-  cfr = 'cfr',
+  cfr = 'cfr'
 
   // abandon
-  variable = 'variable'
 }
 
 export const EDGE_TYPE = 'default';

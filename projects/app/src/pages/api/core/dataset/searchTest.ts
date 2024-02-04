@@ -44,10 +44,11 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     // query extension
     // const { queries } = await searchQueryExtension({
     //   query: text,
-    //   model: global.chatModels[0].model
+    //   model: global.llmModel[0].model
     // });
 
-    const { searchRes, tokens, ...result } = await searchDatasetData({
+    const { searchRes, charsLength, ...result } = await searchDatasetData({
+      teamId,
       rawQuery: text,
       queries: [text],
       model: dataset.vectorModel,
@@ -62,7 +63,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     const { total } = pushGenerateVectorBill({
       teamId,
       tmbId,
-      tokens,
+      charsLength,
       model: dataset.vectorModel,
       source: apikey ? BillSourceEnum.api : BillSourceEnum.fastgpt
     });

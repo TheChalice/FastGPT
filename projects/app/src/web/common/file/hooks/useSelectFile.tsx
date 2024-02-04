@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { Box } from '@chakra-ui/react';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useTranslation } from 'next-i18next';
 
 export const useSelectFile = (props?: {
@@ -27,7 +27,7 @@ export const useSelectFile = (props?: {
             if (e.target.files.length > maxCount) {
               return toast({
                 status: 'warning',
-                title: t('file.Select a maximum of 10 files')
+                title: t('common.file.Select file amount limit', { max: maxCount })
               });
             }
             onSelect(Array.from(e.target.files), openSign.current);
@@ -35,7 +35,7 @@ export const useSelectFile = (props?: {
         />
       </Box>
     ),
-    [fileType, maxCount, multiple]
+    [fileType, maxCount, multiple, t, toast]
   );
 
   const onOpen = useCallback((sign?: any) => {

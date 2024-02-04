@@ -36,8 +36,9 @@ import MyModal from '@/components/MyModal';
 import MyTooltip from '@/components/MyTooltip';
 import { variableTip } from '@fastgpt/global/core/module/template/tip';
 import { useTranslation } from 'next-i18next';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import MyRadio from '@/components/common/MyRadio';
+import { formatEditorVariablePickerIcon } from '@fastgpt/global/core/module/utils';
 
 const VariableEdit = ({
   variables,
@@ -101,19 +102,23 @@ const VariableEdit = ({
   };
 
   const formatVariables = useMemo(() => {
-    return variables.map((item) => ({
-      ...item,
-      icon: VariableTypeList.find((type) => type.value === item.type)?.icon
-    }));
-  }, [VariableTypeList, variables]);
+    const results = formatEditorVariablePickerIcon(variables);
+    return results.map((item) => {
+      const variable = variables.find((variable) => variable.key === item.key);
+      return {
+        ...variable,
+        icon: item.icon
+      };
+    });
+  }, [variables]);
 
   return (
     <Box>
       <Flex alignItems={'center'}>
-        <Image alt={''} src={'/imgs/module/variable.png'} objectFit={'contain'} w={'18px'} />
+        <MyIcon name={'core/app/simpleMode/variable'} w={'20px'} />
         <Box ml={2} flex={1}>
           {t('core.module.Variable')}
-          <MyTooltip label={variableTip} forceShow>
+          <MyTooltip label={t(variableTip)} forceShow>
             <QuestionOutlineIcon display={['none', 'inline']} ml={1} />
           </MyTooltip>
         </Box>
@@ -179,7 +184,7 @@ const VariableEdit = ({
         </Box>
       )}
       <MyModal
-        iconSrc="/imgs/module/variable.png"
+        iconSrc="core/app/simpleMode/variable"
         title={t('core.module.Variable Setting')}
         isOpen={isOpenEdit}
         onClose={onCloseEdit}
@@ -342,6 +347,6 @@ export const defaultVariable: VariableItemType = {
   enums: [{ value: '' }]
 };
 export const addVariable = () => {
-  const newVariable = { ...defaultVariable, key: nanoid(), id: '' };
+  const newVariable = { ...defaultVariable, key: '', id: '' };
   return newVariable;
 };

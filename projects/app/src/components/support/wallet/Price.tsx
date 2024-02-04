@@ -1,37 +1,21 @@
 import React from 'react';
 import { Box, CloseButton } from '@chakra-ui/react';
-import {
-  chatModelList,
-  vectorModelList,
-  qaModelList,
-  cqModelList,
-  extractModelList,
-  qgModelList,
-  audioSpeechModelList,
-  reRankModelList,
-  whisperModel
-} from '@/web/common/system/staticData';
+import { useSystemStore } from '@/web/common/system/useSystemStore';
 import ReactDOM from 'react-dom';
 
 import Markdown from '@/components/Markdown';
 
 const Price = ({ onClose }: { onClose: () => void }) => {
+  const { llmModelList, vectorModelList, audioSpeechModelList, whisperModel } = useSystemStore();
+
   const list = [
     {
-      title: '知识库存储',
-      describe: '',
-      md: `
-| 计费项 | 价格(￥) |
-| --- | --- |
-| 知识库索引数量 | 0/1000条/天 |`
-    },
-    {
-      title: '对话模型',
+      title: 'AI语言模型',
       describe: '',
       md: `
 | 模型 | 输入价格(￥) | 输出价格(￥) |
 | --- | --- | --- |
-${chatModelList
+${llmModelList
   ?.map((item) => `| ${item.name} | ${item.inputPrice}/1k tokens | ${item.outputPrice}/1k tokens |`)
   .join('\n')}`
     },
@@ -41,65 +25,8 @@ ${chatModelList
       md: `
 | 模型 | 价格(￥) |
 | --- | --- |
-${vectorModelList?.map((item) => `| ${item.name} | ${item.inputPrice}/1k tokens |`).join('\n')}
+${vectorModelList?.map((item) => `| ${item.name} | ${item.inputPrice}/1k 字符 |`).join('\n')}
       `
-    },
-    {
-      title: '文件预处理模型(QA 拆分)',
-      describe: '',
-      md: `
-| 模型 | 输入价格(￥) | 输出价格(￥) |
-| --- | --- | --- |
-${qaModelList
-  ?.map(
-    (item) => `| ${item.name} | ${item.inputPrice}/1k tokens |  ${item.outputPrice}/1k tokens |`
-  )
-  .join('\n')}
-      `
-    },
-    {
-      title: '问题分类',
-      describe: '',
-      md: `
-| 模型 | 输入价格(￥) | 输出价格(￥) |
-| --- | --- | --- |
-${cqModelList
-  ?.map(
-    (item) => `| ${item.name} | ${item.inputPrice}/1k tokens |  ${item.outputPrice}/1k tokens |`
-  )
-  .join('\n')}`
-    },
-    {
-      title: '内容提取',
-      describe: '',
-      md: `
-| 模型 | 输入价格(￥) | 输出价格(￥) |
-| --- | --- | --- |
-${extractModelList
-  ?.map(
-    (item) => `| ${item.name} | ${item.inputPrice}/1k tokens |  ${item.outputPrice}/1k tokens |`
-  )
-  .join('\n')}`
-    },
-    {
-      title: '下一步指引',
-      describe: '',
-      md: `
-| 模型 | 输入价格(￥) | 输出价格(￥) |
-| --- | --- | --- |
-${qgModelList
-  ?.map(
-    (item) => `| ${item.name} | ${item.inputPrice}/1k tokens |  ${item.outputPrice}/1k tokens |`
-  )
-  .join('\n')}`
-    },
-    {
-      title: '重排模型(增强检索 & 混合检索)',
-      describe: '',
-      md: `
-| 模型 | 价格(￥) |
-| --- | --- |
-${reRankModelList?.map((item) => `| ${item.name} | ${item.inputPrice}/1k 字符 |`).join('\n')}`
     },
     {
       title: '语音播放',
